@@ -98,19 +98,36 @@ const DashboardLayout = () => {
         </div>
 
         <div className="sidebar-footer">
-          <SidebarItem icon={Settings} label="Settings" path="/dashboard/settings" active={isActive('/dashboard/settings')} />
-          <button 
-            onClick={() => {
-              dispatch({ type: ACTIONS.LOGOUT });
-              navigate('/');
-            }} 
-            className="sidebar-item logout-btn w-full text-left"
-            style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-          >
-            <LogOut size={20} className="sidebar-icon" />
-            <span className="sidebar-label">Logout</span>
-          </button>
-        </div>
+
+  <SidebarItem
+    icon={Settings}
+    label="Settings"
+    path="/dashboard/settings"
+    active={isActive('/dashboard/settings')}
+  />
+
+  <button
+    onClick={() => {
+      localStorage.removeItem("token");
+
+      dispatch({
+        type: "LOGOUT",
+      });
+
+      navigate("/login");
+    }}
+    className="sidebar-item logout-btn w-full text-left"
+    style={{
+      background: 'none',
+      border: 'none',
+      cursor: 'pointer'
+    }}
+  >
+    <LogOut size={20} className="sidebar-icon" />
+    <span className="sidebar-label">Logout</span>
+  </button>
+
+</div>
       </aside>
 
       {/* ── Main ── */}

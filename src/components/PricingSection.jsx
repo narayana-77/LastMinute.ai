@@ -8,7 +8,7 @@ const pricingPlans = [
     period: '/month',
     desc: 'Perfect to try out the AI capabilities.',
     features: [
-      '1 Mock Interview per month',
+      '1 Mock Interview per Day',
       'Basic Resume Analysis',
       'Standard Feedback',
       'Community Access'
@@ -22,7 +22,7 @@ const pricingPlans = [
     period: '/month',
     desc: 'Everything you need to secure that offer.',
     features: [
-      '10 Mock Interviews per month',
+      '10 Mock Interviews per Day',
       'Advanced Resume Intelligence',
       'Real-Time Coding Challenges',
       'Detailed Scorecards & Analytics',

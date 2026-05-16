@@ -1,28 +1,13 @@
-import { Navigate, Outlet } from 'react-router-dom';
-import { useApp } from '../context/AppContext';
+import { Navigate } from "react-router-dom";
 
-/**
- * Redirects to login if not authenticated.
- */
-export const ProtectedRoute = () => {
-  const { state } = useApp();
-  
-  if (!state.isAuthenticated) {
+const ProtectedRoute = ({ children }) => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
     return <Navigate to="/login" replace />;
   }
 
-  return <Outlet />;
+  return children;
 };
 
-/**
- * Redirects to dashboard if already authenticated (for login/signup pages).
- */
-export const PublicRoute = () => {
-  const { state } = useApp();
-  
-  if (state.isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
-  }
-
-  return <Outlet />;
-};
+export default ProtectedRoute;
