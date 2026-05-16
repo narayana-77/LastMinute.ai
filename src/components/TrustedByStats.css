@@ -1,0 +1,36 @@
+.trusted-section {
+  padding: 4rem 0;
+  border-bottom: 1px solid var(--border-glass);
+}
+
+.trusted-text {
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.logos-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 3rem;
+  opacity: 0.5;
+  filter: grayscale(100%);
+  transition: opacity 0.3s ease;
+}
+
+.logos-grid:hover {
+  opacity: 0.8;
+}
+
+.company-logo {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: var(--text-secondary);
+}
