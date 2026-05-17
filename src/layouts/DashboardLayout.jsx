@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   BrainCircuit, LayoutDashboard, FileText, Video, Code2, Users,
@@ -7,9 +7,9 @@ import {
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import ToastContainer from '../components/Toast';
+import AIAssistant from '../components/AIAssistant';
 import './DashboardLayout.css';
 
-// ── Route metadata ────────────────────────────────────────────────────────────
 const ROUTE_META = {
   '/dashboard':          { label: 'Dashboard',         crumb: ['Home', 'Dashboard']         },
   '/dashboard/resume':   { label: 'Resume Analyzer',   crumb: ['Home', 'Resume Analyzer']   },
@@ -22,6 +22,19 @@ const ROUTE_META = {
   '/dashboard/settings': { label: 'Settings',          crumb: ['Home', 'Settings']          },
 };
 
+const SEARCH_MODULES = [
+  { label: 'Dashboard',        path: '/dashboard',           icon: LayoutDashboard, description: 'Overview of your progress' },
+  { label: 'Resume Analyzer',  path: '/dashboard/resume',    icon: FileText,        description: 'Upload and analyze your resume' },
+  { label: 'Mock Interviews',  path: '/dashboard/mock',      icon: Video,           description: 'Practice mock interview rounds' },
+  { label: 'Coding Interview', path: '/dashboard/coding',    icon: Code2,           description: 'Solve coding challenges' },
+  { label: 'HR Trainer',       path: '/dashboard/hr',        icon: Users,           description: 'Prepare for HR rounds' },
+  { label: 'Domain Prep',      path: '/dashboard/domain',    icon: Target,          description: 'Domain-specific preparation' },
+  { label: 'Panic Mode',       path: '/dashboard/panic',     icon: Zap,             description: 'Last minute interview prep' },
+  { label: 'Analytics',        path: '/dashboard/analytics', icon: BarChart3,       description: 'View your performance analytics' },
+  { label: 'History',          path: '/dashboard/history',   icon: History,         description: 'Your interview history' },
+  { label: 'Settings',         path: '/dashboard/settings',  icon: Settings,        description: 'Manage your account settings' },
+];
+
 const SidebarItem = ({ icon: Icon, label, path, active, badge }) => (
   <Link to={path} className={`sidebar-item ${active ? 'active' : ''}`}>
     <Icon size={20} className="sidebar-icon" />
@@ -30,10 +43,108 @@ const SidebarItem = ({ icon: Icon, label, path, active, badge }) => (
   </Link>
 );
 
+const SearchBar = () => {
+  const [query, setQuery] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
+  const navigate = useNavigate();
+  const inputRef = useRef(null);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    if (query.trim().length === 0) {
+      setSuggestions([]);
+      setShowDropdown(false);
+      return;
+    }
+    const q = query.toLowerCase();
+    const filtered = SEARCH_MODULES.filter(
+      m => m.label.toLowerCase().includes(q) || m.description.toLowerCase().includes(q)
+    );
+    setSuggestions(filtered);
+    setShowDropdown(filtered.length > 0);
+    setActiveIndex(-1);
+  }, [query]);
+
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (
+        dropdownRef.current && !dropdownRef.current.contains(e.target) &&
+        inputRef.current && !inputRef.current.contains(e.target)
+      ) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  const handleSelect = (path) => {
+    setQuery('');
+    setShowDropdown(false);
+    navigate(path);
+  };
+
+  const handleKeyDown = (e) => {
+    if (!showDropdown) return;
+    if (e.key === 'ArrowDown') setActiveIndex(prev => Math.min(prev + 1, suggestions.length - 1));
+    else if (e.key === 'ArrowUp') setActiveIndex(prev => Math.max(prev - 1, 0));
+    else if (e.key === 'Enter' && activeIndex >= 0) handleSelect(suggestions[activeIndex].path);
+    else if (e.key === 'Escape') setShowDropdown(false);
+  };
+
+  return (
+    <div className="search-wrapper">
+      <div className="search-bar">
+        <Search size={18} className="search-icon" />
+        <input
+          ref={inputRef}
+          type="text"
+          placeholder="Search modules…"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          onKeyDown={handleKeyDown}
+          onFocus={() => query && setShowDropdown(suggestions.length > 0)}
+          autoComplete="off"
+        />
+        {query && (
+          <button className="search-clear-btn" onClick={() => { setQuery(''); setShowDropdown(false); }}>
+            <X size={14} />
+          </button>
+        )}
+      </div>
+
+      {showDropdown && (
+        <div className="search-dropdown" ref={dropdownRef}>
+          {suggestions.map((item, idx) => {
+            const Icon = item.icon;
+            return (
+              <div
+                key={item.path}
+                className={`search-suggestion ${idx === activeIndex ? 'active' : ''}`}
+                onClick={() => handleSelect(item.path)}
+                onMouseEnter={() => setActiveIndex(idx)}
+              >
+                <div className="suggestion-icon"><Icon size={16} /></div>
+                <div className="suggestion-info">
+                  <span className="suggestion-label">{item.label}</span>
+                  <span className="suggestion-desc">{item.description}</span>
+                </div>
+                <ChevronRight size={14} className="suggestion-arrow" />
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const location  = useLocation();
-  const navigate  = useNavigate();
+  const location = useLocation();
+  const navigate = useNavigate();
   const { state, dispatch } = useApp();
 
   const meta   = ROUTE_META[location.pathname] ?? { label: 'Page', crumb: ['Home', 'Page'] };
@@ -48,19 +159,21 @@ const DashboardLayout = () => {
     <div className="dashboard-layout">
       {sidebarOpen && <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />}
 
-      {/* ── Sidebar ── */}
       <aside className={`sidebar glass-panel ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
-          <Link to="/" className="logo">
+          <button
+            className="logo"
+            onClick={() => navigate('/')}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+          >
             <BrainCircuit className="logo-icon" size={28} />
             <span className="logo-text">LastMinute<span className="accent">.ai</span></span>
-          </Link>
+          </button>
           <button className="mobile-close-btn" onClick={() => setSidebarOpen(false)}>
             <X size={24} />
           </button>
         </div>
 
-        {/* User pill */}
         <div className="sidebar-user-pill">
           <div className="avatar sm">{state.userInitials}</div>
           <div className="sideuser-info">
@@ -72,76 +185,46 @@ const DashboardLayout = () => {
         <div className="sidebar-nav-scroll">
           <div className="nav-section">
             <p className="nav-section-title">MAIN</p>
-            <SidebarItem icon={LayoutDashboard} label="Dashboard"       path="/dashboard"          active={isActive('/dashboard')} />
-            <SidebarItem icon={FileText}        label="Resume Analyzer" path="/dashboard/resume"   active={isActive('/dashboard/resume')}
-              badge={state.resumeAnalyzed ? '✓' : null} />
+            <SidebarItem icon={LayoutDashboard} label="Dashboard"       path="/dashboard"        active={isActive('/dashboard')} />
+            <SidebarItem icon={FileText}        label="Resume Analyzer" path="/dashboard/resume" active={isActive('/dashboard/resume')} badge={state.resumeAnalyzed ? '✓' : null} />
           </div>
-
           <div className="nav-section">
             <p className="nav-section-title">PRACTICE</p>
-            <SidebarItem icon={Video}   label="Mock Interviews"  path="/dashboard/mock"    active={isActive('/dashboard/mock')}
-              badge={state.mockScore ? state.mockScore : null} />
-            <SidebarItem icon={Code2}   label="Coding Interview" path="/dashboard/coding"  active={isActive('/dashboard/coding')}
-              badge={state.codingScore ? state.codingScore : null} />
-            <SidebarItem icon={Users}   label="HR Trainer"       path="/dashboard/hr"      active={isActive('/dashboard/hr')}
-              badge={state.hrScore ? state.hrScore : null} />
-            <SidebarItem icon={Target}  label="Domain Prep"      path="/dashboard/domain"  active={isActive('/dashboard/domain')} />
-            <SidebarItem icon={Zap}     label="Panic Mode"       path="/dashboard/panic"   active={isActive('/dashboard/panic')} />
+            <SidebarItem icon={Video}  label="Mock Interviews"  path="/dashboard/mock"   active={isActive('/dashboard/mock')}   badge={state.mockScore || null} />
+            <SidebarItem icon={Code2}  label="Coding Interview" path="/dashboard/coding" active={isActive('/dashboard/coding')} badge={state.codingScore || null} />
+            <SidebarItem icon={Users}  label="HR Trainer"       path="/dashboard/hr"     active={isActive('/dashboard/hr')}     badge={state.hrScore || null} />
+            <SidebarItem icon={Target} label="Domain Prep"      path="/dashboard/domain" active={isActive('/dashboard/domain')} />
+            <SidebarItem icon={Zap}    label="Panic Mode"       path="/dashboard/panic"  active={isActive('/dashboard/panic')} />
           </div>
-
           <div className="nav-section">
             <p className="nav-section-title">REPORTS</p>
-            <SidebarItem icon={BarChart3} label="Analytics" path="/dashboard/analytics" active={isActive('/dashboard/analytics')}
-              badge={state.totalInterviews > 0 ? state.totalInterviews : null} />
+            <SidebarItem icon={BarChart3} label="Analytics" path="/dashboard/analytics" active={isActive('/dashboard/analytics')} badge={state.totalInterviews > 0 ? state.totalInterviews : null} />
             <SidebarItem icon={History}   label="History"   path="/dashboard/history"   active={isActive('/dashboard/history')} />
           </div>
         </div>
 
         <div className="sidebar-footer">
-
-  <SidebarItem
-    icon={Settings}
-    label="Settings"
-    path="/dashboard/settings"
-    active={isActive('/dashboard/settings')}
-  />
-
-  <button
-    onClick={() => {
-      localStorage.removeItem("token");
-
-      dispatch({
-        type: "LOGOUT",
-      });
-
-      navigate("/login");
-    }}
-    className="sidebar-item logout-btn w-full text-left"
-    style={{
-      background: 'none',
-      border: 'none',
-      cursor: 'pointer'
-    }}
-  >
-    <LogOut size={20} className="sidebar-icon" />
-    <span className="sidebar-label">Logout</span>
-  </button>
-
-</div>
+          <SidebarItem icon={Settings} label="Settings" path="/dashboard/settings" active={isActive('/dashboard/settings')} />
+          <button
+            onClick={() => { localStorage.removeItem("token"); dispatch({ type: "LOGOUT" }); navigate("/login"); }}
+            className="sidebar-item logout-btn w-full text-left"
+            style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+          >
+            <LogOut size={20} className="sidebar-icon" />
+            <span className="sidebar-label">Logout</span>
+          </button>
+        </div>
       </aside>
 
-      {/* ── Main ── */}
       <main className="dashboard-main">
         <header className="dashboard-header glass-panel">
           <div className="header-left">
-            <button className="menu-btn" onClick={() => setSidebarOpen(true)}>
-              <Menu size={24} />
-            </button>
+            <button className="menu-btn" onClick={() => setSidebarOpen(true)}><Menu size={24} /></button>
             <div className="breadcrumbs">
               {crumbs.map((crumb, i) => (
                 <span key={i} className="breadcrumb-item">
                   {i < crumbs.length - 1
-                    ? <><span className="crumb-link" onClick={() => navigate('/dashboard')}>{crumb}</span><ChevronRight size={14} className="crumb-sep" /></>
+                    ? <><span className="crumb-link" onClick={() => navigate('/')}>{crumb}</span><ChevronRight size={14} className="crumb-sep" /></>
                     : <span className="crumb-active">{crumb}</span>
                   }
                 </span>
@@ -150,29 +233,21 @@ const DashboardLayout = () => {
           </div>
 
           <div className="header-right">
-            <div className="search-bar">
-              <Search size={18} className="search-icon" />
-              <input type="text" placeholder="Search modules…" />
-            </div>
-
-            {/* Readiness pill */}
+            <SearchBar />
             {state.overallReadiness != null && (
-              <div className="readiness-pill" title="Overall Readiness">
+              <div className="readiness-pill">
                 <span className="rp-label">Ready</span>
                 <span className="rp-val">{state.overallReadiness}%</span>
               </div>
             )}
-
             <button className="ai-assist-btn">
               <BrainCircuit size={18} />
               <span className="btn-text">AI Assistant</span>
             </button>
-
             <button className="icon-btn notification-btn">
               <Bell size={20} />
               {state.totalInterviews > 0 && <span className="notification-dot"></span>}
             </button>
-
             <div className="user-profile">
               <div className="avatar">{state.userInitials}</div>
             </div>
@@ -184,7 +259,6 @@ const DashboardLayout = () => {
         </div>
       </main>
 
-      {/* Global toasts */}
       <ToastContainer />
     </div>
   );
