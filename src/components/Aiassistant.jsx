@@ -41,6 +41,13 @@ const AIAssistant = () => {
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
+  // ✅ Listen for header button click to open chat
+  useEffect(() => {
+    const handleOpen = () => setIsOpen(true);
+    window.addEventListener('openAIChat', handleOpen);
+    return () => window.removeEventListener('openAIChat', handleOpen);
+  }, []);
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -107,7 +114,6 @@ const AIAssistant = () => {
     }]);
   };
 
-  // Format message content with basic markdown
   const formatMessage = (content) => {
     return content
       .replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
@@ -117,104 +123,89 @@ const AIAssistant = () => {
       .replace(/\n/g, '<br/>');
   };
 
+  // ✅ Only render chat window — no floating button
+  if (!isOpen) return null;
+
   return (
-    <>
-
-{/* Navbar AI Button */}
-{!isOpen && (
-  <button
-    className="ai-assist-btn"
-    onClick={() => setIsOpen(true)}
-  >
-    <BrainCircuit size={18} />
-    <span className="btn-text">AI Assistant</span>
-  </button>
-)}
-
-
-      {/* Chat Window */}
-      {isOpen && (
-        <div className={`ai-chat-window ${isMaximized ? 'maximized' : ''}`}>
-          {/* Header */}
-          <div className="ai-chat-header">
-            <div className="ai-chat-header-left">
-              <div className="ai-avatar">
-                <BrainCircuit size={18} />
-              </div>
-              <div>
-                <p className="ai-chat-title">LastMinute AI</p>
-                <p className="ai-chat-status">
-                  <span className="status-dot"></span> Online
-                </p>
-              </div>
-            </div>
-            <div className="ai-chat-header-actions">
-              <button onClick={clearChat} title="Clear chat"><Trash2 size={16} /></button>
-              <button onClick={() => setIsMaximized(!isMaximized)} title="Toggle size">
-                {isMaximized ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
-              </button>
-              <button onClick={() => setIsOpen(false)} title="Close"><X size={16} /></button>
-            </div>
+    <div className={`ai-chat-window ${isMaximized ? 'maximized' : ''}`}>
+      {/* Header */}
+      <div className="ai-chat-header">
+        <div className="ai-chat-header-left">
+          <div className="ai-avatar">
+            <BrainCircuit size={18} />
           </div>
-
-          {/* Messages */}
-          <div className="ai-chat-messages">
-            {messages.map((msg, idx) => (
-              <div key={idx} className={`ai-message ${msg.role}`}>
-                {msg.role === 'assistant' && (
-                  <div className="ai-message-avatar"><BrainCircuit size={14} /></div>
-                )}
-                <div
-                  className="ai-message-bubble"
-                  dangerouslySetInnerHTML={{ __html: formatMessage(msg.content) }}
-                />
-              </div>
-            ))}
-
-            {isLoading && (
-              <div className="ai-message assistant">
-                <div className="ai-message-avatar"><BrainCircuit size={14} /></div>
-                <div className="ai-message-bubble ai-typing">
-                  <span></span><span></span><span></span>
-                </div>
-              </div>
-            )}
-            <div ref={messagesEndRef} />
-          </div>
-
-          {/* Quick Prompts */}
-          {messages.length <= 1 && (
-            <div className="ai-quick-prompts">
-              {QUICK_PROMPTS.map((prompt, idx) => (
-                <button key={idx} className="quick-prompt-btn" onClick={() => sendMessage(prompt)}>
-                  {prompt}
-                </button>
-              ))}
-            </div>
-          )}
-
-          {/* Input */}
-          <div className="ai-chat-input-area">
-            <textarea
-              ref={inputRef}
-              className="ai-chat-input"
-              placeholder="Ask me anything about interviews..."
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              rows={1}
-            />
-            <button
-              className={`ai-send-btn ${(!input.trim() || isLoading) ? 'disabled' : ''}`}
-              onClick={() => sendMessage()}
-              disabled={!input.trim() || isLoading}
-            >
-              <Send size={18} />
-            </button>
+          <div>
+            <p className="ai-chat-title">LastMinute AI</p>
+            <p className="ai-chat-status">
+              <span className="status-dot"></span> Online
+            </p>
           </div>
         </div>
+        <div className="ai-chat-header-actions">
+          <button onClick={clearChat} title="Clear chat"><Trash2 size={16} /></button>
+          <button onClick={() => setIsMaximized(!isMaximized)} title="Toggle size">
+            {isMaximized ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+          </button>
+          <button onClick={() => setIsOpen(false)} title="Close"><X size={16} /></button>
+        </div>
+      </div>
+
+      {/* Messages */}
+      <div className="ai-chat-messages">
+        {messages.map((msg, idx) => (
+          <div key={idx} className={`ai-message ${msg.role}`}>
+            {msg.role === 'assistant' && (
+              <div className="ai-message-avatar"><BrainCircuit size={14} /></div>
+            )}
+            <div
+              className="ai-message-bubble"
+              dangerouslySetInnerHTML={{ __html: formatMessage(msg.content) }}
+            />
+          </div>
+        ))}
+
+        {isLoading && (
+          <div className="ai-message assistant">
+            <div className="ai-message-avatar"><BrainCircuit size={14} /></div>
+            <div className="ai-message-bubble ai-typing">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+        )}
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Quick Prompts */}
+      {messages.length <= 1 && (
+        <div className="ai-quick-prompts">
+          {QUICK_PROMPTS.map((prompt, idx) => (
+            <button key={idx} className="quick-prompt-btn" onClick={() => sendMessage(prompt)}>
+              {prompt}
+            </button>
+          ))}
+        </div>
       )}
-    </>
+
+      {/* Input */}
+      <div className="ai-chat-input-area">
+        <textarea
+          ref={inputRef}
+          className="ai-chat-input"
+          placeholder="Ask me anything about interviews..."
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          rows={1}
+        />
+        <button
+          className={`ai-send-btn ${(!input.trim() || isLoading) ? 'disabled' : ''}`}
+          onClick={() => sendMessage()}
+          disabled={!input.trim() || isLoading}
+        >
+          <Send size={18} />
+        </button>
+      </div>
+    </div>
   );
 };
 

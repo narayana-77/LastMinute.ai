@@ -11,28 +11,30 @@ import AIAssistant from '../components/AIAssistant';
 import './DashboardLayout.css';
 
 const ROUTE_META = {
-  '/dashboard':          { label: 'Dashboard',         crumb: ['Home', 'Dashboard']         },
-  '/dashboard/resume':   { label: 'Resume Analyzer',   crumb: ['Home', 'Resume Analyzer']   },
-  '/dashboard/mock':     { label: 'Mock Interviews',   crumb: ['Home', 'Mock Interviews']   },
-  '/dashboard/coding':   { label: 'Coding Interview',  crumb: ['Home', 'Coding Interview']  },
-  '/dashboard/hr':       { label: 'HR Trainer',        crumb: ['Home', 'HR Trainer']        },
-  '/dashboard/panic':    { label: 'Panic Mode 🔥',     crumb: ['Home', 'Panic Mode']        },
-  '/dashboard/analytics':{ label: 'Analytics',         crumb: ['Home', 'Analytics']         },
-  '/dashboard/history':  { label: 'History',           crumb: ['Home', 'History']           },
-  '/dashboard/settings': { label: 'Settings',          crumb: ['Home', 'Settings']          },
+  '/dashboard':                { label: 'Dashboard',        crumb: ['Home', 'Dashboard'] },
+  '/dashboard/resume':         { label: 'Resume Analyzer',  crumb: ['Home', 'Resume Analyzer'] },
+  '/dashboard/mock':           { label: 'Mock Interviews',  crumb: ['Home', 'Mock Interviews'] },
+  '/dashboard/coding':         { label: 'Coding Interview', crumb: ['Home', 'Coding Interview'] },
+  '/dashboard/hr':             { label: 'HR Trainer',       crumb: ['Home', 'HR Trainer'] },
+  '/dashboard/panic':          { label: 'Panic Mode 🔥',    crumb: ['Home', 'Panic Mode'] },
+  '/dashboard/analytics':      { label: 'Analytics',        crumb: ['Home', 'Analytics'] },
+  '/dashboard/history':        { label: 'History',          crumb: ['Home', 'History'] },
+  '/dashboard/settings':       { label: 'Settings',         crumb: ['Home', 'Settings'] },
+  '/dashboard/notifications':  { label: 'Notifications',    crumb: ['Home', 'Notifications'] },
 };
 
 const SEARCH_MODULES = [
-  { label: 'Dashboard',        path: '/dashboard',           icon: LayoutDashboard, description: 'Overview of your progress' },
-  { label: 'Resume Analyzer',  path: '/dashboard/resume',    icon: FileText,        description: 'Upload and analyze your resume' },
-  { label: 'Mock Interviews',  path: '/dashboard/mock',      icon: Video,           description: 'Practice mock interview rounds' },
-  { label: 'Coding Interview', path: '/dashboard/coding',    icon: Code2,           description: 'Solve coding challenges' },
-  { label: 'HR Trainer',       path: '/dashboard/hr',        icon: Users,           description: 'Prepare for HR rounds' },
-  { label: 'Domain Prep',      path: '/dashboard/domain',    icon: Target,          description: 'Domain-specific preparation' },
-  { label: 'Panic Mode',       path: '/dashboard/panic',     icon: Zap,             description: 'Last minute interview prep' },
-  { label: 'Analytics',        path: '/dashboard/analytics', icon: BarChart3,       description: 'View your performance analytics' },
-  { label: 'History',          path: '/dashboard/history',   icon: History,         description: 'Your interview history' },
-  { label: 'Settings',         path: '/dashboard/settings',  icon: Settings,        description: 'Manage your account settings' },
+  { label: 'Dashboard',         path: '/dashboard',                   icon: LayoutDashboard, description: 'Overview of your interview prep' },
+  { label: 'Resume Analyzer',   path: '/dashboard/resume',            icon: FileText,       description: 'Upload and analyze your resume' },
+  { label: 'Mock Interviews',   path: '/dashboard/mock',              icon: Video,          description: 'Practice mock interview rounds' },
+  { label: 'Coding Interview',  path: '/dashboard/coding',            icon: Code2,          description: 'Solve coding challenges' },
+  { label: 'HR Trainer',        path: '/dashboard/hr',                icon: Users,          description: 'Prepare for HR rounds' },
+  { label: 'Domain Prep',       path: '/dashboard/domain',            icon: Target,         description: 'Domain-specific preparation' },
+  { label: 'Panic Mode',        path: '/dashboard/panic',             icon: Zap,            description: 'Last minute interview prep' },
+  { label: 'Analytics',         path: '/dashboard/analytics',         icon: BarChart3,      description: 'View your performance analytics' },
+  { label: 'History',           path: '/dashboard/history',           icon: History,        description: 'Your interview history' },
+  { label: 'Settings',          path: '/dashboard/settings',          icon: Settings,       description: 'Manage your account settings' },
+  { label: 'Notifications',     path: '/dashboard/notifications',     icon: Bell,           description: 'View your alerts and updates' },
 ];
 
 const SidebarItem = ({ icon: Icon, label, path, active, badge }) => (
@@ -109,7 +111,11 @@ const SearchBar = () => {
           autoComplete="off"
         />
         {query && (
-          <button className="search-clear-btn" onClick={() => { setQuery(''); setShowDropdown(false); }}>
+          <button
+            className="search-clear-btn"
+            onClick={() => { setQuery(''); setShowDropdown(false); }}
+            aria-label="Clear search"
+          >
             <X size={14} />
           </button>
         )}
@@ -147,8 +153,10 @@ const DashboardLayout = () => {
   const navigate = useNavigate();
   const { state, dispatch } = useApp();
 
-  const meta   = ROUTE_META[location.pathname] ?? { label: 'Page', crumb: ['Home', 'Page'] };
+  const meta = ROUTE_META[location.pathname] ?? { label: 'Page', crumb: ['Home', 'Page'] };
   const crumbs = meta.crumb;
+  const unreadNotifications = state.totalInterviews > 0 ? Math.min(state.totalInterviews, 9) : 0;
+  const notificationsActive = location.pathname === '/dashboard/notifications';
 
   const isActive = (path) =>
     path === '/dashboard'
@@ -185,28 +193,35 @@ const DashboardLayout = () => {
         <div className="sidebar-nav-scroll">
           <div className="nav-section">
             <p className="nav-section-title">MAIN</p>
-            <SidebarItem icon={LayoutDashboard} label="Dashboard"       path="/dashboard"        active={isActive('/dashboard')} />
-            <SidebarItem icon={FileText}        label="Resume Analyzer" path="/dashboard/resume" active={isActive('/dashboard/resume')} badge={state.resumeAnalyzed ? '✓' : null} />
+            <SidebarItem icon={LayoutDashboard} label="Dashboard" path="/dashboard" active={isActive('/dashboard')} />
+            <SidebarItem icon={FileText} label="Resume Analyzer" path="/dashboard/resume" active={isActive('/dashboard/resume')} badge={state.resumeAnalyzed ? '✓' : null} />
           </div>
+
           <div className="nav-section">
             <p className="nav-section-title">PRACTICE</p>
-            <SidebarItem icon={Video}  label="Mock Interviews"  path="/dashboard/mock"   active={isActive('/dashboard/mock')}   badge={state.mockScore || null} />
-            <SidebarItem icon={Code2}  label="Coding Interview" path="/dashboard/coding" active={isActive('/dashboard/coding')} badge={state.codingScore || null} />
-            <SidebarItem icon={Users}  label="HR Trainer"       path="/dashboard/hr"     active={isActive('/dashboard/hr')}     badge={state.hrScore || null} />
-            <SidebarItem icon={Target} label="Domain Prep"      path="/dashboard/domain" active={isActive('/dashboard/domain')} />
-            <SidebarItem icon={Zap}    label="Panic Mode"       path="/dashboard/panic"  active={isActive('/dashboard/panic')} />
+            <SidebarItem icon={Video} label="Mock Interviews" path="/dashboard/mock" active={isActive('/dashboard/mock')} badge={state.mockScore || null} />
+            <SidebarItem icon={Code2} label="Coding Interview" path="/dashboard/coding" active={isActive('/dashboard/coding')} badge={state.codingScore || null} />
+            <SidebarItem icon={Users} label="HR Trainer" path="/dashboard/hr" active={isActive('/dashboard/hr')} badge={state.hrScore || null} />
+            <SidebarItem icon={Target} label="Domain Prep" path="/dashboard/domain" active={isActive('/dashboard/domain')} />
+            <SidebarItem icon={Zap} label="Panic Mode" path="/dashboard/panic" active={isActive('/dashboard/panic')} />
           </div>
+
           <div className="nav-section">
             <p className="nav-section-title">REPORTS</p>
             <SidebarItem icon={BarChart3} label="Analytics" path="/dashboard/analytics" active={isActive('/dashboard/analytics')} badge={state.totalInterviews > 0 ? state.totalInterviews : null} />
-            <SidebarItem icon={History}   label="History"   path="/dashboard/history"   active={isActive('/dashboard/history')} />
+            <SidebarItem icon={History} label="History" path="/dashboard/history" active={isActive('/dashboard/history')} />
+            <SidebarItem icon={Bell} label="Notifications" path="/dashboard/notifications" active={isActive('/dashboard/notifications')} badge={unreadNotifications || null} />
           </div>
         </div>
 
         <div className="sidebar-footer">
           <SidebarItem icon={Settings} label="Settings" path="/dashboard/settings" active={isActive('/dashboard/settings')} />
           <button
-            onClick={() => { localStorage.removeItem("token"); dispatch({ type: "LOGOUT" }); navigate("/login"); }}
+            onClick={() => {
+              localStorage.removeItem('token');
+              dispatch({ type: 'LOGOUT' });
+              navigate('/login');
+            }}
             className="sidebar-item logout-btn w-full text-left"
             style={{ background: 'none', border: 'none', cursor: 'pointer' }}
           >
@@ -219,14 +234,21 @@ const DashboardLayout = () => {
       <main className="dashboard-main">
         <header className="dashboard-header glass-panel">
           <div className="header-left">
-            <button className="menu-btn" onClick={() => setSidebarOpen(true)}><Menu size={24} /></button>
+            <button className="menu-btn" onClick={() => setSidebarOpen(true)} aria-label="Open sidebar">
+              <Menu size={24} />
+            </button>
+
             <div className="breadcrumbs">
               {crumbs.map((crumb, i) => (
                 <span key={i} className="breadcrumb-item">
-                  {i < crumbs.length - 1
-                    ? <><span className="crumb-link" onClick={() => navigate('/')}>{crumb}</span><ChevronRight size={14} className="crumb-sep" /></>
-                    : <span className="crumb-active">{crumb}</span>
-                  }
+                  {i < crumbs.length - 1 ? (
+                    <>
+                      <span className="crumb-link" onClick={() => navigate('/')}>{crumb}</span>
+                      <ChevronRight size={14} className="crumb-sep" />
+                    </>
+                  ) : (
+                    <span className="crumb-active">{crumb}</span>
+                  )}
                 </span>
               ))}
             </div>
@@ -234,20 +256,42 @@ const DashboardLayout = () => {
 
           <div className="header-right">
             <SearchBar />
+
             {state.overallReadiness != null && (
               <div className="readiness-pill">
                 <span className="rp-label">Ready</span>
                 <span className="rp-val">{state.overallReadiness}%</span>
               </div>
             )}
-            <button className="ai-assist-btn">
+
+            <button
+              className="ai-assist-btn"
+              onClick={() => {
+                const event = new CustomEvent('openAIChat');
+                window.dispatchEvent(event);
+              }}
+            >
               <BrainCircuit size={18} />
               <span className="btn-text">AI Assistant</span>
             </button>
-            <button className="icon-btn notification-btn">
+
+            <Link
+              to="/dashboard/notifications"
+              className={`icon-btn notification-btn ${notificationsActive ? 'active' : ''}`}
+              aria-label={`Open notifications${unreadNotifications ? `, ${unreadNotifications} unread` : ''}`}
+            >
               <Bell size={20} />
-              {state.totalInterviews > 0 && <span className="notification-dot"></span>}
-            </button>
+              {unreadNotifications > 0 && (
+                <>
+                  <span className="notification-ping"></span>
+                  <span className="notification-dot"></span>
+                  <span className="notification-count">
+                    {unreadNotifications > 9 ? '9+' : unreadNotifications}
+                  </span>
+                </>
+              )}
+            </Link>
+
             <div className="user-profile">
               <div className="avatar">{state.userInitials}</div>
             </div>
@@ -259,6 +303,7 @@ const DashboardLayout = () => {
         </div>
       </main>
 
+      <AIAssistant />
       <ToastContainer />
     </div>
   );
