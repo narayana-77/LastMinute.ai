@@ -1,0 +1,231 @@
+/* ══════════════════════════════════════════════════
+   Profile Avatar Button  (in DashboardLayout.css)
+   — paste into your DashboardLayout.css
+══════════════════════════════════════════════════ */
+.profile-avatar-wrap {
+  position: relative;
+}
+
+.profile-avatar-btn {
+  cursor: pointer;
+  border: 2px solid rgba(255,255,255,.15);
+  transition: all .22s ease;
+  background: linear-gradient(135deg, rgba(112,0,255,.35), rgba(0,240,255,.25));
+  outline: none;
+}
+.profile-avatar-btn:hover {
+  border-color: rgba(0,240,255,.55);
+  box-shadow: 0 0 18px rgba(0,240,255,.25), 0 0 0 3px rgba(0,240,255,.08);
+  transform: scale(1.06);
+}
+.profile-avatar-btn--open {
+  border-color: rgba(0,240,255,.7);
+  box-shadow: 0 0 24px rgba(0,240,255,.3), 0 0 0 4px rgba(0,240,255,.1);
+}
+
+/* ══════════════════════════════════════════════════
+   Profile Dropdown  (.pd)
+══════════════════════════════════════════════════ */
+.pd {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 240px;
+  background: rgba(8, 8, 20, 0.97);
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 16px;
+  backdrop-filter: blur(24px);
+  box-shadow:
+    0 24px 60px rgba(0,0,0,.65),
+    0 0 0 1px rgba(0,240,255,.06),
+    0 0 40px rgba(112,0,255,.08);
+  z-index: 10000;
+  overflow: hidden;
+  /* hidden state */
+  opacity: 0;
+  transform: translateY(-8px) scale(0.97);
+  pointer-events: none;
+  transition:
+    opacity .22s cubic-bezier(.22,1,.36,1),
+    transform .22s cubic-bezier(.22,1,.36,1);
+}
+.pd--open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: all;
+}
+
+/* arrow */
+.pd__arrow {
+  position: absolute;
+  top: -6px;
+  right: 16px;
+  width: 12px; height: 12px;
+  background: rgba(8,8,20,.97);
+  border-left: 1px solid rgba(255,255,255,.09);
+  border-top: 1px solid rgba(255,255,255,.09);
+  transform: rotate(45deg);
+  border-radius: 2px 0 0 0;
+}
+
+/* ── User strip ── */
+.pd__user {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: 1rem 1rem .9rem;
+}
+.pd__user-avatar {
+  position: relative;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(112,0,255,.5), rgba(0,240,255,.4));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .85rem;
+  font-weight: 800;
+  color: #fff;
+  flex-shrink: 0;
+  letter-spacing: .02em;
+}
+.pd__user-avatar-ring {
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(0,240,255,.35);
+  animation: ring-spin 4s linear infinite;
+  border-top-color: rgba(0,240,255,.8);
+}
+@keyframes ring-spin {
+  to { transform: rotate(360deg); }
+}
+.pd__user-info { min-width: 0; }
+.pd__user-name {
+  font-size: .88rem;
+  font-weight: 700;
+  color: #e8e8f4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+.pd__user-role {
+  font-size: .71rem;
+  color: rgba(0,240,255,.6);
+  margin-top: .18rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+}
+
+/* ── Divider ── */
+.pd__divider {
+  height: 1px;
+  background: rgba(255,255,255,.06);
+  margin: 0 .75rem;
+}
+
+/* ── Nav items ── */
+.pd__nav {
+  padding: .4rem .4rem;
+  display: flex;
+  flex-direction: column;
+  gap: .15rem;
+}
+.pd__item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  padding: .6rem .75rem;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  color: rgba(255,255,255,.6);
+  font-size: .83rem;
+  font-weight: 500;
+  transition: all .18s ease;
+  opacity: 0;
+  animation: item-in .3s cubic-bezier(.22,1,.36,1) forwards;
+  position: relative;
+}
+@keyframes item-in {
+  from { opacity:0; transform:translateX(-6px); }
+  to   { opacity:1; transform:translateX(0); }
+}
+.pd__item:hover {
+  background: rgba(255,255,255,.05);
+  color: #fff;
+}
+.pd__item--cyan:hover {
+  background: rgba(0,240,255,.07);
+  color: #00f0ff;
+}
+.pd__item--purple:hover {
+  background: rgba(112,0,255,.1);
+  color: #c084fc;
+}
+
+.pd__item-icon {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all .18s ease;
+}
+.pd__item-icon--cyan  { background: rgba(0,240,255,.08);  color: rgba(0,240,255,.7);  }
+.pd__item-icon--purple{ background: rgba(112,0,255,.1);   color: rgba(192,132,252,.7);}
+.pd__item--cyan:hover  .pd__item-icon--cyan   { background: rgba(0,240,255,.15);  color: #00f0ff; box-shadow: 0 0 10px rgba(0,240,255,.2); }
+.pd__item--purple:hover .pd__item-icon--purple{ background: rgba(112,0,255,.18);  color: #c084fc; box-shadow: 0 0 10px rgba(112,0,255,.2); }
+
+.pd__item-label { flex: 1; }
+
+.pd__item-arrow {
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: all .18s ease;
+  color: rgba(255,255,255,.3);
+}
+.pd__item:hover .pd__item-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.pd__item-badge {
+  font-size: .62rem;
+  font-weight: 800;
+  background: #ef4444;
+  color: #fff;
+  border-radius: 20px;
+  padding: .1rem .4rem;
+  min-width: 18px;
+  text-align: center;
+}
+
+/* ── Logout ── */
+.pd__logout {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  padding: .7rem 1rem .85rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: rgba(239,68,68,.6);
+  font-size: .83rem;
+  font-weight: 600;
+  transition: all .18s ease;
+  border-radius: 0 0 16px 16px;
+}
+.pd__logout:hover {
+  background: rgba(239,68,68,.07);
+  color: #f87171;
+}
