@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useApp } from '../context/AppContext';
+import { useApp } from '../../context/AppContext';
 import {
   ArrowLeft, Edit3, Save, X, Camera, Mail, Phone, Globe,
-  Github, Linkedin, MapPin, Calendar, Code2, FileText,
+  MapPin, Calendar, Code2, FileText,
   Video, BrainCircuit, TrendingUp, Star, Zap, Shield,
   CheckCircle2, AlertCircle, Lightbulb, Target, Clock,
   Award, ChevronRight, Lock, Bell, Trash2, LogOut, Eye, EyeOff
@@ -80,7 +80,7 @@ const Profile = () => {
 
   const [form, setForm] = useState({
     name:      state.userName      || 'Narayana Reddy Yaramala',
-    email:     state.email         || 'narayana@example.com',
+    email:     state.userEmail     || 'narayana@example.com',
     phone:     state.phone         || '',
     bio:       state.bio           || '',
     location:  state.location      || '',
@@ -264,8 +264,8 @@ const Profile = () => {
             <div className="pp__overview-grid">
               <Section title="Social Links" icon={Globe} delay={0}>
                 <div className="pp__links">
-                  {form.linkedin  && <a href={form.linkedin}  target="_blank" rel="noreferrer" className="pp__link pp__link--linkedin"><Linkedin size={15}/> LinkedIn</a>}
-                  {form.github    && <a href={form.github}    target="_blank" rel="noreferrer" className="pp__link pp__link--github"><Github size={15}/> GitHub</a>}
+                  {form.linkedin  && <a href={form.linkedin}  target="_blank" rel="noreferrer" className="pp__link pp__link--linkedin"><Globe size={15}/> LinkedIn</a>}
+                  {form.github    && <a href={form.github}    target="_blank" rel="noreferrer" className="pp__link pp__link--github"><Code2 size={15}/> GitHub</a>}
                   {form.portfolio && <a href={form.portfolio} target="_blank" rel="noreferrer" className="pp__link pp__link--portfolio"><Globe size={15}/> Portfolio</a>}
                   {!form.linkedin && !form.github && !form.portfolio && (
                     <p className="pp__empty-note">No social links added yet. Go to <button onClick={()=>setActiveTab('info')} className="pp__inline-btn">Edit Info</button> to add them.</p>
@@ -362,8 +362,8 @@ const Profile = () => {
             <Section title="Social & Links" icon={Globe} delay={80}>
               <div className="pp__form">
                 {[
-                  { key:'linkedin',  label:'LinkedIn URL',  icon: Linkedin, placeholder:'https://linkedin.com/in/...' },
-                  { key:'github',    label:'GitHub URL',    icon: Github,   placeholder:'https://github.com/...'     },
+                  { key:'linkedin',  label:'LinkedIn URL',  icon: Globe,    placeholder:'https://linkedin.com/in/...' },
+                  { key:'github',    label:'GitHub URL',    icon: Code2,    placeholder:'https://github.com/...'     },
                   { key:'portfolio', label:'Portfolio URL', icon: Globe,    placeholder:'https://yoursite.com'       },
                 ].map(f => {
                   const Icon = f.icon;

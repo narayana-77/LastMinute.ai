@@ -8,6 +8,7 @@ import {
 import { useApp } from '../context/AppContext';
 import ToastContainer from '../components/Toast';
 import AIAssistant from '../components/AIAssistant';
+import ProfileDropdown from '../components/ProfileDropdown';
 import './DashboardLayout.css';
 
 const ROUTE_META = {
@@ -21,6 +22,7 @@ const ROUTE_META = {
   '/dashboard/history':        { label: 'History',          crumb: ['Home', 'History'] },
   '/dashboard/settings':       { label: 'Settings',         crumb: ['Home', 'Settings'] },
   '/dashboard/notifications':  { label: 'Notifications',    crumb: ['Home', 'Notifications'] },
+  '/dashboard/profile':        { label: 'My Profile',       crumb: ['Home', 'Profile'] },
 };
 
 const SEARCH_MODULES = [
@@ -149,6 +151,7 @@ const SearchBar = () => {
 
 const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { state, dispatch } = useApp();
@@ -292,8 +295,29 @@ const DashboardLayout = () => {
               )}
             </Link>
 
-            <div className="user-profile">
-              <div className="avatar">{state.userInitials}</div>
+            <div className="user-profile profile-avatar-wrap">
+              <button
+                className={`avatar profile-avatar-btn ${profileDropdownOpen ? 'profile-avatar-btn--open' : ''}`}
+                onClick={() => setProfileDropdownOpen(prev => !prev)}
+                aria-label="Toggle profile menu"
+                aria-expanded={profileDropdownOpen}
+                aria-haspopup="menu"
+              >
+                {state.userInitials}
+              </button>
+              <ProfileDropdown
+                open={profileDropdownOpen}
+                onClose={() => setProfileDropdownOpen(false)}
+                userName={state.userName}
+                userInitials={state.userInitials}
+                predictedRole={state.predictedRole}
+                onLogout={() => {
+                  localStorage.removeItem('token');
+                  dispatch({ type: 'LOGOUT' });
+                  navigate('/login');
+                }}
+                navigate={navigate}
+              />
             </div>
           </div>
         </header>

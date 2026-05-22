@@ -19,6 +19,16 @@ const initialState = {
         .toUpperCase()
     : '',
 
+  phone: localStorage.getItem("userPhone") || '',
+  bio: localStorage.getItem("userBio") || '',
+  location: localStorage.getItem("userLocation") || '',
+  skills: localStorage.getItem("userSkills") || 'React, Node.js, Python, DSA',
+  education: localStorage.getItem("userEducation") || 'B.Tech Computer Science',
+  experience: localStorage.getItem("userExperience") || '',
+  linkedin: localStorage.getItem("userLinkedin") || '',
+  github: localStorage.getItem("userGithub") || '',
+  portfolio: localStorage.getItem("userPortfolio") || '',
+
   // Resume / Profile data
   resumeFile: null,
   resumeSource: null,
@@ -59,6 +69,7 @@ export const ACTIONS = {
   ADD_TOAST: 'ADD_TOAST',
   REMOVE_TOAST: 'REMOVE_TOAST',
   RESET_RESUME: 'RESET_RESUME',
+  UPDATE_PROFILE: 'UPDATE_PROFILE',
 };
 
 // ── Reducer ───────────────────────────────────────────────────────────────────
@@ -96,10 +107,58 @@ const appReducer = (state, action) => {
       localStorage.removeItem("token");
       localStorage.removeItem("userName");
       localStorage.removeItem("userEmail");
+      localStorage.removeItem("userPhone");
+      localStorage.removeItem("userBio");
+      localStorage.removeItem("userLocation");
+      localStorage.removeItem("userSkills");
+      localStorage.removeItem("userEducation");
+      localStorage.removeItem("userExperience");
+      localStorage.removeItem("userLinkedin");
+      localStorage.removeItem("userGithub");
+      localStorage.removeItem("userPortfolio");
 
       return {
         ...initialState,
         toasts: state.toasts,
+      };
+    }
+
+    case ACTIONS.UPDATE_PROFILE: {
+      const { name, email, phone, bio, location, skills, education, experience, linkedin, github, portfolio } = action.payload;
+
+      localStorage.setItem("userName", name);
+      localStorage.setItem("userEmail", email);
+      localStorage.setItem("userPhone", phone || '');
+      localStorage.setItem("userBio", bio || '');
+      localStorage.setItem("userLocation", location || '');
+      localStorage.setItem("userSkills", skills || '');
+      localStorage.setItem("userEducation", education || '');
+      localStorage.setItem("userExperience", experience || '');
+      localStorage.setItem("userLinkedin", linkedin || '');
+      localStorage.setItem("userGithub", github || '');
+      localStorage.setItem("userPortfolio", portfolio || '');
+
+      const initials = name
+        .split(' ')
+        .map(w => w[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2);
+
+      return {
+        ...state,
+        userName: name,
+        userEmail: email,
+        userInitials: initials,
+        phone,
+        bio,
+        location,
+        skills,
+        education,
+        experience,
+        linkedin,
+        github,
+        portfolio,
       };
     }
 

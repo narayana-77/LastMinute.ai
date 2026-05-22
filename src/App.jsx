@@ -19,6 +19,7 @@ import CodingInterview from './pages/dashboard/CodingInterview';
 import HrInterview from './pages/dashboard/HrInterview';
 import PanicMode from './pages/dashboard/PanicMode';
 import Analytics from './pages/dashboard/Analytics';
+import Profile from './pages/dashboard/Profile';
 
 function App() {
   return (
@@ -53,6 +54,7 @@ function App() {
             <Route path="hr" element={<HrInterview />} />
             <Route path="panic" element={<PanicMode />} />
             <Route path="analytics" element={<Analytics />} />
+            <Route path="profile" element={<Profile />} />
             <Route
               path="*"
               element={<div className="p-4 text-secondary">Coming Soon…</div>}
