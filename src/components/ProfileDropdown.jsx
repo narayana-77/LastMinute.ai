@@ -1,37 +1,98 @@
 import { useEffect, useRef } from 'react';
-import { User, LayoutDashboard, Settings, Bell, LogOut, ChevronRight, Sparkles } from 'lucide-react';
+import {
+  User,
+  Settings,
+  Bell,
+  LogOut,
+  ChevronRight,
+  Sparkles
+} from 'lucide-react';
+
 import './ProfileDropdown.css';
 
 const MENU_ITEMS = [
-  { icon: User,          label: 'My Profile',    path: '/dashboard/profile',       accent: 'cyan'   },
-  { icon: LayoutDashboard,label:'Dashboard',     path: '/dashboard',               accent: 'purple' },
-  { icon: Settings,      label: 'Settings',      path: '/dashboard/settings',      accent: 'purple' },
-  { icon: Bell,          label: 'Notifications', path: '/dashboard/notifications', accent: 'cyan', badge: 3 },
+  {
+    icon: User,
+    label: 'My Profile',
+    path: '/dashboard/profile',
+    accent: 'cyan'
+  },
+
+  {
+    icon: Sparkles,
+    label: 'Upgrade to Pro',
+    path: '/dashboard/upgrade',
+    accent: 'gold'
+  },
+
+  {
+    icon: Settings,
+    label: 'Settings',
+    path: '/dashboard/settings',
+    accent: 'purple'
+  },
+
+  {
+    icon: Bell,
+    label: 'Interview Alerts',
+    path: '/dashboard/notifications',
+    accent: 'cyan',
+    badge: 3
+  }
 ];
 
-const ProfileDropdown = ({ open, onClose, userName, userInitials, predictedRole, onLogout, navigate }) => {
+const ProfileDropdown = ({
+  open,
+  onClose,
+  userName,
+  userInitials,
+  predictedRole,
+  onLogout,
+  navigate
+}) => {
   const ref = useRef(null);
 
-  // Close on outside click
+  // Close dropdown on outside click
   useEffect(() => {
     if (!open) return;
+
     const handler = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) onClose();
+      if (ref.current && !ref.current.contains(e.target)) {
+        onClose();
+      }
     };
-    // slight delay so the toggle click doesn't immediately close
-    const t = setTimeout(() => document.addEventListener('mousedown', handler), 0);
-    return () => { clearTimeout(t); document.removeEventListener('mousedown', handler); };
+
+    const timeout = setTimeout(() => {
+      document.addEventListener('mousedown', handler);
+    }, 0);
+
+    return () => {
+      clearTimeout(timeout);
+      document.removeEventListener('mousedown', handler);
+    };
   }, [open, onClose]);
 
-  // Close on Escape
+  // Close dropdown on Escape key
   useEffect(() => {
     if (!open) return;
-    const handler = (e) => { if (e.key === 'Escape') onClose(); };
+
+    const handler = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
     document.addEventListener('keydown', handler);
-    return () => document.removeEventListener('keydown', handler);
+
+    return () => {
+      document.removeEventListener('keydown', handler);
+    };
   }, [open, onClose]);
 
-  const handleNav = (path) => { navigate(path); onClose(); };
+  const handleNavigation = (path) => {
+    navigate(path);
+    onClose();
+  };
 
   return (
     <div
@@ -40,46 +101,81 @@ const ProfileDropdown = ({ open, onClose, userName, userInitials, predictedRole,
       role="menu"
       aria-hidden={!open}
     >
-      {/* Arrow pointer */}
+      {/* Arrow */}
       <div className="pd__arrow" />
 
-      {/* User identity strip */}
+      {/* User Section */}
       <div className="pd__user">
         <div className="pd__user-avatar">
-          {userInitials}
+          {userInitials || 'U'}
           <span className="pd__user-avatar-ring" />
         </div>
+
         <div className="pd__user-info">
-          <p className="pd__user-name">{userName || 'User'}</p>
+          <p className="pd__user-name truncate">
+            {userName || 'User'}
+          </p>
+
           <p className="pd__user-role">
-            <Sparkles size={10} style={{ display:'inline', marginRight:3 }} />
-            {predictedRole || 'Profile not analyzed'}
+            <Sparkles
+              size={10}
+              style={{
+                display: 'inline',
+                marginRight: 4
+              }}
+            />
+
+            {predictedRole || 'Complete profile analysis'}
           </p>
         </div>
       </div>
 
       <div className="pd__divider" />
 
-      {/* Menu items */}
+      {/* Menu Items */}
       <nav className="pd__nav">
-        {MENU_ITEMS.map((item, i) => {
+        {MENU_ITEMS.map((item, index) => {
           const Icon = item.icon;
+
           return (
             <button
               key={item.path}
               className={`pd__item pd__item--${item.accent}`}
-              onClick={() => handleNav(item.path)}
+              onClick={() => handleNavigation(item.path)}
               role="menuitem"
-              style={{ animationDelay: `${i * 40}ms` }}
+              style={{
+                animationDelay: `${index * 40}ms`
+              }}
             >
-              <span className={`pd__item-icon pd__item-icon--${item.accent}`}>
+              {/* Icon */}
+              <span
+                className={`pd__item-icon pd__item-icon--${item.accent}`}
+              >
                 <Icon size={15} />
               </span>
-              <span className="pd__item-label">{item.label}</span>
+
+              {/* Label */}
+              <span className="pd__item-label">
+                {item.label}
+              </span>
+
+              {/* PRO Badge */}
+              {item.label === 'Upgrade to Pro' && (
+                <span className="pd__pro-badge">
+                  PRO
+                </span>
+              )}
+
+              {/* Notification Badge */}
               {item.badge ? (
-                <span className="pd__item-badge">{item.badge}</span>
+                <span className="pd__item-badge">
+                  {item.badge}
+                </span>
               ) : (
-                <ChevronRight size={13} className="pd__item-arrow" />
+                <ChevronRight
+                  size={13}
+                  className="pd__item-arrow"
+                />
               )}
             </button>
           );
@@ -89,7 +185,14 @@ const ProfileDropdown = ({ open, onClose, userName, userInitials, predictedRole,
       <div className="pd__divider" />
 
       {/* Logout */}
-      <button className="pd__logout" onClick={() => { onLogout(); onClose(); }} role="menuitem">
+      <button
+        className="pd__logout"
+        onClick={() => {
+          onLogout();
+          onClose();
+        }}
+        role="menuitem"
+      >
         <LogOut size={15} />
         <span>Sign out</span>
       </button>
