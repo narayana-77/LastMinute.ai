@@ -1,187 +1,375 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  BrainCircuit, Zap, Target, TrendingUp, Clock, ChevronRight,
-  ShieldAlert, Code2, MessageSquare, Play, Star, CheckCircle2, MoreVertical
+  Target, TrendingUp, Clock, ChevronRight, Star, FileText, 
+  Sparkles, ArrowUp
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import ErrorBoundary from '../../components/ErrorBoundary';
+import brainHologram from '../../assets/brain_hologram.png';
+import aiBot from '../../assets/ai_bot.png';
 import './DashboardOverview.css';
 
 const DashboardOverview = () => {
   const navigate = useNavigate();
   const { state } = useApp();
+  const [loading, setLoading] = useState(true);
 
-  const stats = [
-    { title: 'Readiness Score', value: `${state.readinessScore}%`, subtitle: 'Personalized AI Prediction', icon: Target, class: 'cyan-glow' },
-    { title: 'Resume Score', value: `${state.atsScore || '--'}`, subtitle: 'ATS Optimization Rank', icon: BrainCircuit, class: 'purple-glow' },
-    { title: 'Prep Sessions', value: state.totalInterviews || 0, subtitle: 'Modules Completed', icon: Clock, class: 'green-glow' },
-    { title: 'AI Confidence', value: state.aiConfidence ? `${state.aiConfidence}%` : '--', subtitle: 'Pattern Match Rating', icon: Star, class: 'pink-glow' },
-  ];
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 600); // Shimmer duration
+    return () => clearTimeout(timer);
+  }, []);
 
-  const recentMocks = [
-    { type: 'Technical', role: 'Frontend Engineer', score: 84, date: '2 days ago', status: 'Good' },
-    { type: 'Coding', role: 'JavaScript Algos', score: 92, date: 'Yesterday', status: 'Excellent' },
-    { type: 'HR', role: 'Behavioral Round', score: 78, date: '5 hours ago', status: 'Improving' },
-  ];
+  const userName = state?.userName || "Narayana Reddy Yaramala";
+
+  if (loading) {
+    return (
+      <div className="dashboard-overview dashboard-skeleton-view fade-in">
+        {/* Banner Skeleton */}
+        <div className="welcome-banner skeleton-banner glass-panel">
+          <div className="skeleton-welcome-left">
+            <div className="skeleton-line skeleton-badge"></div>
+            <div className="skeleton-line skeleton-title"></div>
+            <div className="skeleton-line skeleton-subtitle"></div>
+            <div className="skeleton-sub-panels">
+              <div className="skeleton-panel"></div>
+              <div className="skeleton-panel"></div>
+            </div>
+          </div>
+          <div className="skeleton-welcome-right"></div>
+        </div>
+
+        {/* Stats Grid Skeleton */}
+        <div className="stats-cards-grid">
+          <div className="stat-card skeleton-card glass-panel"></div>
+          <div className="stat-card skeleton-card glass-panel"></div>
+          <div className="stat-card skeleton-card glass-panel"></div>
+        </div>
+
+        {/* Bottom Widgets Skeleton */}
+        <div className="bottom-widgets-grid">
+          <div className="bottom-card skeleton-card glass-panel"></div>
+          <div className="bottom-card skeleton-card glass-panel"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard-overview fade-in">
-      <div className="welcome-banner glass-panel">
-        <div className="welcome-content">
-          <h2>Welcome back, <span className="gradient-text">{state.userName || 'Candidate'}</span>!</h2>
-          <p>Your interview readiness is increasing. You've completed 3 sessions this week.</p>
-        </div>
-        <button className="btn btn-primary" onClick={() => navigate('/dashboard/resume')}>
-          <Zap size={18} /> Update Profile
-        </button>
-      </div>
-
-      <div className="stats-grid">
-        {stats.map((stat, i) => (
-          <div key={i} className={`stat-card glass-panel ${stat.class}`}>
-            <div className="stat-header">
-              <div className="stat-icon-wrapper">
-                <stat.icon size={20} />
-              </div>
-              <span className="stat-title">{stat.title}</span>
+      {/* Hero Welcome Banner */}
+      <ErrorBoundary title="Welcome Banner Error" fallbackText="The welcome dashboard section encountered a rendering error.">
+        <div className="welcome-banner glass-panel">
+          <div className="welcome-left">
+            <div className="badge-career">
+              <span role="img" aria-label="rocket" className="rocket-emoji">🚀</span> Keep building your career
             </div>
-            <div className="stat-value">{stat.value}</div>
-            <div className="stat-subtitle">{stat.subtitle}</div>
-          </div>
-        ))}
-      </div>
+            <h2 className="welcome-title">
+              Welcome back, <span className="gradient-name">{userName}</span>! 👋
+            </h2>
+            <p className="welcome-subtitle">
+              Your interview readiness is improving every day. You've completed 3 sessions this week.
+            </p>
 
-      <div className="dashboard-grid">
-        {/* Left Column */}
-        <div className="grid-col-left">
-          {/* Resume Widget */}
-          <div className="dashboard-widget glass-panel">
-            <div className="widget-header">
-              <div className="widget-title"><BrainCircuit size={20} className="text-purple" /> <h3>Resume Analysis</h3></div>
-              <button className="btn-text-small" onClick={() => navigate('/dashboard/resume')}>View Report</button>
-            </div>
-            {state.resumeAnalyzed ? (
-              <div className="resume-stats">
-                <div className="ats-score">
-                  <div className="circular-progress">
-                    <span>{state.atsScore}</span>
-                  </div>
-                  <p>ATS Match</p>
-                </div>
-                <div className="resume-details">
-                   <div className="detail-item">
-                      <span className="detail-label"><Target size={14} /> Predicted Role</span>
-                      <span className="detail-value">{state.predictedRole}</span>
-                   </div>
-                   <div className="detail-item">
-                      <span className="detail-label"><TrendingUp size={14} /> Top Skills</span>
-                      <div className="skill-tags">
-                        {state.detectedSkills?.slice(0, 3).map(s => <span key={s} className="tag">{s}</span>)}
-                      </div>
-                   </div>
-                   <div className="detail-item warning">
-                      <span className="detail-label"><ShieldAlert size={14} /> Critical Weakness</span>
-                      <span className="detail-value">{state.weakAreas?.[0] || 'None detected'}</span>
-                   </div>
-                </div>
-              </div>
-            ) : (
-              <div className="empty-widget-state py-4 text-center">
-                 <p className="text-muted mb-4">No resume data found. Upload to enable AI features.</p>
-                 <button className="btn btn-outline" onClick={() => navigate('/dashboard/resume')}>Analyze Resume</button>
-              </div>
-            )}
-          </div>
-
-          {/* Recent Performance */}
-          <div className="dashboard-widget glass-panel">
-            <div className="widget-header">
-              <div className="widget-title"><TrendingUp size={20} className="text-cyan" /> <h3>Recent Performance</h3></div>
-              <button className="btn-text-small" onClick={() => navigate('/dashboard/analytics')}>Analytics</button>
-            </div>
-            <div className="recent-mocks-list">
-              {recentMocks.map((mock, i) => (
-                <div key={i} className="mock-card">
-                  <div className="mock-info">
-                    <h4>{mock.type} Round</h4>
-                    <p className="mock-meta">{mock.role} • {mock.date}</p>
-                  </div>
-                  <div className="mock-score-wrap">
-                    <span className={`score-badge ${mock.score > 80 ? 'good' : 'warning'}`}>{mock.score}%</span>
-                    <button className="icon-btn-small"><ChevronRight size={18} /></button>
+            <div className="welcome-sub-panels">
+              {/* Profile Completion */}
+              <div className="sub-panel profile-completion">
+                <div className="panel-header">
+                  <span className="avatar-icon-mock">👤</span>
+                  <div className="panel-info">
+                    <span className="panel-value">65% Completed</span>
                   </div>
                 </div>
-              ))}
+                <div className="progress-track">
+                  <div className="progress-bar" style={{ width: '65%' }}></div>
+                </div>
+              </div>
+
+              {/* AI Tip */}
+              <div className="sub-panel ai-tip">
+                <div className="panel-header">
+                  <span className="tip-icon-mock">💡</span>
+                  <div className="panel-info">
+                    <span className="panel-value desc">Consistency builds confidence. Complete 5+ mock interviews this week to sharpen your performance.</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Right Column */}
-        <div className="grid-col-right">
-          {/* Panic Mode Widget */}
-          <div className="dashboard-widget glass-panel panic-widget">
-            <div className="widget-header border-none">
-              <span className="badge-urgent">URGENT</span>
-              <button className="icon-btn-small"><MoreVertical size={18} /></button>
-            </div>
-            <div className="upcoming-details mt-2">
-              <h4>Interview Preparation</h4>
-              <p className="text-secondary text-sm">Target: {state.targetCompany || 'Top Tech Companies'}</p>
+          <div className="welcome-right">
+            <div className="hologram-podium-container">
+              <div className="concentric-ring ring-outer"></div>
+              <div className="concentric-ring ring-middle"></div>
+              <div className="concentric-ring ring-inner"></div>
+              <img src={brainHologram} alt="Brain Hologram" className="brain-image animate-float" />
               
-              <div className="priority-topics">
-                <p className="section-label">PRIORITY TOPICS</p>
-                <ul>
-                  <li><CheckCircle2 size={14} className="text-green" /> System Design Patterns</li>
-                  <li><CheckCircle2 size={14} className="text-muted" /> Dynamic Programming</li>
-                  <li><CheckCircle2 size={14} className="text-muted" /> Behavioral Questions</li>
-                </ul>
+              {/* Floating nodes with icons */}
+              <div className="floating-node node-1">
+                <Target size={16} color="#00F0FF" />
+              </div>
+              <div className="floating-node node-2">
+                <FileText size={16} color="#7000FF" />
+              </div>
+              <div className="floating-node node-3">
+                <TrendingUp size={16} color="#FF00E5" />
               </div>
 
-              <button className="btn btn-outline panic-btn w-full mt-3" onClick={() => navigate('/dashboard/panic')}>
-                <Zap size={16} /> Activate Panic Mode
-              </button>
-            </div>
-          </div>
-
-          {/* AI Recommendations */}
-          <div className="dashboard-widget glass-panel">
-            <div className="widget-header">
-              <div className="widget-title"><Star size={20} className="text-gold" /> <h3>AI Recommendations</h3></div>
-            </div>
-            <div className="recommendations-list">
-              <div className="rec-item">
-                <div className="rec-icon bg-purple-dim">
-                  <Code2 className="text-purple" size={16} />
-                </div>
-                <div className="rec-content">
-                  <h5>Focus on Micro-frontends</h5>
-                  <p>Based on your last coding round, you could improve orchestration logic.</p>
-                </div>
-              </div>
-              <div className="rec-item">
-                <div className="rec-icon bg-cyan-dim">
-                  <MessageSquare className="text-cyan" size={16} />
-                </div>
-                <div className="rec-content">
-                  <h5>HR Mock Pending</h5>
-                  <p>You haven't practiced behavioral rounds yet. Highly recommended for Senior roles.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="quick-actions-grid">
-            <div className="quick-action-btn glass-panel" onClick={() => navigate('/dashboard/coding')}>
-              <Code2 size={24} className="text-purple" />
-              <span>Coding Round</span>
-            </div>
-            <div className="quick-action-btn glass-panel" onClick={() => navigate('/dashboard/mock')}>
-              <Play size={24} className="text-cyan" />
-              <span>Mock Round</span>
+             
             </div>
           </div>
         </div>
+      </ErrorBoundary>
+
+      {/* Core Stats Cards */}
+      <div className="stats-cards-grid">
+        {/* Card 1: Readiness Score */}
+        <ErrorBoundary title="Readiness Score Error" fallbackText="Failed to load your Readiness Score.">
+          <div className="stat-card glass-panel readiness-card">
+            <div className="card-header">
+              <div className="title-section">
+                <Target size={18} className="icon-cyan" />
+                <span>Readiness Score</span>
+              </div>
+              <svg className="sparkline" width="60" height="20" viewBox="0 0 60 20">
+                <path d="M 0 15 Q 15 5 30 12 T 60 5" fill="none" stroke="#00F0FF" strokeWidth="1.5" />
+              </svg>
+            </div>
+            <div className="card-content-split">
+              <div className="gauge-wrapper">
+                <svg className="gauge-svg" width="84" height="84" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="40" className="gauge-bg" />
+                  <circle 
+                    cx="50" 
+                    cy="50" 
+                    r="40" 
+                    className="gauge-progress cyan-progress" 
+                    style={{ 
+                      strokeDashoffset: state?.overallReadiness 
+                        ? 251.2 - (251.2 * Math.min(Math.max(state.overallReadiness, 0), 100)) / 100 
+                        : 251.2 
+                    }}
+                  />
+                </svg>
+                <div className="gauge-value">{state?.overallReadiness != null ? `${state.overallReadiness}%` : '--'}</div>
+              </div>
+              <div className="card-details">
+                <h4>Complete your profile</h4>
+                <p>Add your skills & experience to get AI readiness score</p>
+                <button className="card-action-btn btn-cyan" onClick={() => navigate('/dashboard/profile')}>
+                  Complete Profile <ChevronRight size={14} />
+                </button>
+              </div>
+            </div>
+          </div>
+        </ErrorBoundary>
+
+        {/* Card 2: Resume Score */}
+        <ErrorBoundary title="Resume Score Error" fallbackText="Failed to load your Resume Score.">
+          <div className="stat-card glass-panel resume-card">
+            <div className="card-header">
+              <div className="title-section">
+                <FileText size={18} className="icon-purple" />
+                <span>Resume Score</span>
+              </div>
+              <svg className="sparkline" width="60" height="20" viewBox="0 0 60 20">
+                <path d="M 0 8 Q 15 18 30 6 T 60 12" fill="none" stroke="#7000FF" strokeWidth="1.5" />
+              </svg>
+            </div>
+            <div className="card-content-split">
+              <div className="gauge-wrapper">
+                <svg className="gauge-svg" width="84" height="84" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="40" className="gauge-bg" />
+                  <circle 
+                    cx="50" 
+                    cy="50" 
+                    r="40" 
+                    className="gauge-progress purple-progress" 
+                    style={{ 
+                      strokeDashoffset: state?.atsScore 
+                        ? 251.2 - (251.2 * Math.min(Math.max(state.atsScore, 0), 100)) / 100 
+                        : 251.2 
+                    }}
+                  />
+                </svg>
+                <div className="gauge-value">{state?.atsScore != null ? state.atsScore : '--'}</div>
+              </div>
+              <div className="card-details">
+                <h4>Upload your resume</h4>
+                <p>Get AI-powered feedback and improve your score</p>
+                <button className="card-action-btn btn-purple" onClick={() => navigate('/dashboard/resume')}>
+                  Upload Resume <ArrowUp size={14} />
+                </button>
+              </div>
+            </div>
+          </div>
+        </ErrorBoundary>
+
+        {/* Card 3: Prep Sessions */}
+        <ErrorBoundary title="Prep Sessions Error" fallbackText="Failed to load your Prep Sessions counter.">
+          <div className="stat-card glass-panel prep-card">
+            <div className="card-header">
+              <div className="title-section">
+                <Clock size={18} className="icon-green" />
+                <span>Prep Sessions</span>
+              </div>
+              <svg className="sparkline" width="60" height="20" viewBox="0 0 60 20">
+                <path d="M 0 15 Q 15 12 30 8 T 60 15" fill="none" stroke="#00FF66" strokeWidth="1.5" />
+              </svg>
+            </div>
+            <div className="card-content-split">
+              <div className="sessions-counter">{state?.totalInterviews != null ? state.totalInterviews : 0}</div>
+              <div className="card-details">
+                <h4>No sessions yet</h4>
+                <p>Start your first mock interview to track your progress</p>
+                <button className="card-action-btn btn-green" onClick={() => navigate('/dashboard/mock')}>
+                  Start Mock Interview <ChevronRight size={14} />
+                </button>
+              </div>
+            </div>
+          </div>
+        </ErrorBoundary>
       </div>
+
+      {/* Bottom Widgets */}
+      <div className="bottom-widgets-grid">
+        {/* Left: AI Confidence Radar */}
+        <ErrorBoundary title="AI Confidence Radar Error" fallbackText="Failed to render AI Confidence metrics.">
+          <div className="bottom-card glass-panel confidence-card">
+            <div className="card-header">
+              <div className="title-section">
+                <Star size={18} fill="#7000FF" className="icon-purple" />
+                <span>AI Confidence</span>
+              </div>
+            </div>
+            <div className="widget-split">
+              <div className="widget-info">
+                <h4>Complete more sessions</h4>
+                <p>Your AI confidence score will appear here as you practice more.</p>
+              </div>
+              <div className="radar-chart-container">
+                <svg className="radar-svg" width="150" height="150" viewBox="0 0 120 120">
+                  {/* Grid Rings */}
+                  <polygon points="60,15 103,46 86,96 34,96 17,46" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
+                  <polygon points="60,30 92,53 79,91 41,91 28,53" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
+                  <polygon points="60,45 81,61 73,85 47,85 39,61" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
+                  
+                  {/* Axis lines */}
+                  <line x1="60" y1="65" x2="60" y2="15" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
+                  <line x1="60" y1="65" x2="103" y2="46" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
+                  <line x1="60" y1="65" x2="86" y2="96" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
+                  <line x1="60" y1="65" x2="34" y2="96" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
+                  <line x1="60" y1="65" x2="17" y2="46" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
+
+                  {/* Radar Area Polygon (Empty/Initial State) */}
+                  <polygon points="60,48 76,57 70,77 50,77 44,57" fill="rgba(112, 0, 255, 0.25)" stroke="#7000FF" strokeWidth="1.5" />
+
+                  {/* Axis Labels */}
+                  <text x="60" y="10" textAnchor="middle" className="radar-label font-display-label">Communication</text>
+                  <text x="105" y="44" textAnchor="start" className="radar-label font-display-label">Problem Solving</text>
+                  <text x="89" y="104" textAnchor="start" className="radar-label font-display-label">Technical</text>
+                  <text x="31" y="104" textAnchor="end" className="radar-label font-display-label">Behavioral</text>
+                  <text x="14" y="44" textAnchor="end" className="radar-label font-display-label">Consistency</text>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </ErrorBoundary>
+
+        {/* Right: Weekly Progress Bar Chart */}
+        <ErrorBoundary title="Weekly Progress Error" fallbackText="Failed to render Weekly Progress stats.">
+          <div className="bottom-card glass-panel progress-card">
+            <div className="card-header">
+              <div className="title-section">
+                <TrendingUp size={18} className="icon-green" />
+                <span>Weekly Progress</span>
+              </div>
+              <div className="time-filter-dropdown">
+                This Week <span className="arrow-down">▾</span>
+              </div>
+            </div>
+            <div className="widget-split">
+              <div className="widget-info">
+                <div className="big-counter">{state?.totalInterviews != null ? state.totalInterviews : 3}</div>
+                <h4>Sessions Completed</h4>
+                <div className="progress-status-badge">
+                  <span className="target-dot">🎯</span> Keep it up!
+                </div>
+                <p>You're on the right track.</p>
+              </div>
+              <div className="bar-chart-container">
+                <div className="bars-flex">
+                  <div className="bar-col">
+                    <div className="bar-track">
+                      <div className="bar-fill blue-fill" style={{ height: '30%' }}></div>
+                    </div>
+                    <span className="bar-day">Mon</span>
+                  </div>
+                  <div className="bar-col">
+                    <div className="bar-track">
+                      <div className="bar-fill blue-fill" style={{ height: '55%' }}></div>
+                    </div>
+                    <span className="bar-day">Tue</span>
+                  </div>
+                  <div className="bar-col">
+                    <div className="bar-track">
+                      <div className="bar-fill purple-fill" style={{ height: '95%' }}></div>
+                    </div>
+                    <span className="bar-day">Wed</span>
+                  </div>
+                  <div className="bar-col">
+                    <div className="bar-track">
+                      <div className="bar-fill purple-fill" style={{ height: '45%' }}></div>
+                    </div>
+                    <span className="bar-day">Thu</span>
+                  </div>
+                  <div className="bar-col">
+                    <div className="bar-track empty-track">
+                      <div className="bar-dot"></div>
+                    </div>
+                    <span className="bar-day">Fri</span>
+                  </div>
+                  <div className="bar-col">
+                    <div className="bar-track empty-track">
+                      <div className="bar-dot"></div>
+                    </div>
+                    <span className="bar-day">Sat</span>
+                  </div>
+                  <div className="bar-col">
+                    <div className="bar-track empty-track">
+                      <div className="bar-dot"></div>
+                    </div>
+                    <span className="bar-day">Sun</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ErrorBoundary>
+      </div>
+
+      {/* Guidance Bar */}
+      <ErrorBoundary title="Guidance Bar Error" fallbackText="Guidance tip section encountered an error.">
+        <div className="guidance-bar glass-panel">
+          <div className="guidance-avatar-container">
+            <img src={aiBot} alt="AI Assistant Avatar" className="guidance-avatar" />
+          </div>
+          <div className="guidance-text">
+            <h3>Need guidance?</h3>
+            <p>Ask our AI Assistant anything about interview preparation, resume improvement, or career tips.</p>
+          </div>
+          <div className="guidance-action">
+            <button className="chat-ai-btn" onClick={() => {
+              const event = new CustomEvent('openAIChat');
+              window.dispatchEvent(event);
+            }}>
+              <Sparkles size={16} fill="white" /> Chat with AI Assistant
+            </button>
+          </div>
+        </div>
+      </ErrorBoundary>
     </div>
   );
 };

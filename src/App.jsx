@@ -20,7 +20,7 @@ import HrInterview from './pages/dashboard/HrInterview';
 import PanicMode from './pages/dashboard/PanicMode';
 import Analytics from './pages/dashboard/Analytics';
 import Profile from './pages/dashboard/Profile';
-
+import NotificationsPage from './pages/dashboard/NotificationsPage';
 function App() {
   return (
     <AppProvider>
@@ -55,6 +55,10 @@ function App() {
             <Route path="panic" element={<PanicMode />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="profile" element={<Profile />} />
+            <Route
+  path="notifications"
+  element={<NotificationsPage />}
+/>
             <Route
               path="*"
               element={<div className="p-4 text-secondary">Coming Soon…</div>}

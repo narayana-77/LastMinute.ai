@@ -1,6 +1,15 @@
-import { useState, useRef, useEffect } from 'react';
-import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import React, {
+  useState,
+  useEffect,
+  useRef
+} from 'react';
 
+import {
+  Link,
+  Outlet,
+  useNavigate,
+  useLocation
+} from 'react-router-dom';
 import {
   BrainCircuit,
   LayoutDashboard,
@@ -18,10 +27,16 @@ import {
   Search,
   Menu,
   X,
-  ChevronRight
+  ChevronRight,
+  Clock,
+  TrendingUp,
+  MessageSquare,
+  Star,
+  Sparkles
 } from 'lucide-react';
 
 import { useApp } from '../context/AppContext';
+import ErrorBoundary from '../components/ErrorBoundary';
 
 import ToastContainer from '../components/Toast';
 import AIAssistant from '../components/AIAssistant';
@@ -168,27 +183,43 @@ const SEARCH_MODULES = [
 const SidebarItem = ({
   icon: Icon,
   label,
-  path,
+  path = '#',
   active,
-  badge
-}) => (
-  <Link
-    to={path}
-    className={`sidebar-item ${active ? 'active' : ''}`}
-  >
-    <Icon size={20} className="sidebar-icon" />
+  badge,
+  onClick,
+  className = ''
+}) => {
+  const handleClick = (e) => {
+    if (onClick) {
+      e.preventDefault();
+      onClick();
+    }
+  };
 
-    <span className="sidebar-label">
-      {label}
-    </span>
+  return (
+    <Link
+      to={path}
+      onClick={handleClick}
+      className={`sidebar-item ${active ? 'active' : ''} ${className}`}
+    >
+      <Icon size={20} className="sidebar-icon" />
 
-    {badge && (
-      <span className="sidebar-badge">
-        {badge}
+      <span className="sidebar-label">
+        {label}
       </span>
-    )}
-  </Link>
-);
+
+      {badge && (
+        <span className="sidebar-badge">
+          {badge}
+        </span>
+      )}
+
+      {active && (
+        <ChevronRight size={14} className="sidebar-active-chevron" />
+      )}
+    </Link>
+  );
+};
 
 const SearchBar = () => {
   const [query, setQuery] = useState('');
@@ -286,7 +317,7 @@ const SearchBar = () => {
         <input
           ref={inputRef}
           type="text"
-          placeholder="Search modules..."
+          placeholder="Search modules, features..."
           value={query}
           onChange={(e) =>
             setQuery(e.target.value)
@@ -300,6 +331,12 @@ const SearchBar = () => {
           }
           autoComplete="off"
         />
+
+        {!query && (
+          <div className="search-shortcut-badge">
+            <span className="shortcut-symbol">⌘</span> K
+          </div>
+        )}
 
         {query && (
           <button
@@ -389,9 +426,9 @@ const DashboardLayout = () => {
   const crumbs = meta.crumb;
 
   const unreadNotifications =
-    state.totalInterviews > 0
+    state?.totalInterviews !== undefined && state?.totalInterviews > 0
       ? Math.min(state.totalInterviews, 9)
-      : 0;
+      : 2;
 
   const notificationsActive =
     location.pathname ===
@@ -456,158 +493,138 @@ const DashboardLayout = () => {
         </div>
 
         <div className="sidebar-nav-scroll">
-          <div className="nav-section">
-            <p className="nav-section-title">
-              MAIN
-            </p>
 
-            <SidebarItem
-              icon={LayoutDashboard}
-              label="Dashboard"
-              path="/dashboard"
-              active={isActive('/dashboard')}
-            />
+  {/* MAIN */}
+  <div className="nav-section">
+    <p className="nav-section-title">
+      MAIN
+    </p>
 
-            <SidebarItem
-              icon={FileText}
-              label="Resume Analyzer"
-              path="/dashboard/resume"
-              active={isActive('/dashboard/resume')}
-              badge={
-                state.resumeAnalyzed
-                  ? '✓'
-                  : null
-              }
-            />
-          </div>
+    <SidebarItem
+      icon={LayoutDashboard}
+      label="Dashboard"
+      path="/dashboard"
+      active={isActive('/dashboard')}
+    />
 
-          <div className="nav-section">
-            <p className="nav-section-title">
-              PRACTICE
-            </p>
+    <SidebarItem
+      icon={FileText}
+      label="Resume Analyzer"
+      path="/dashboard/resume"
+      active={isActive('/dashboard/resume')}
+    />
+  </div>
 
-            <SidebarItem
-              icon={Video}
-              label="Mock Interviews"
-              path="/dashboard/mock"
-              active={isActive('/dashboard/mock')}
-              badge={
-                state.mockScore ||
-                null
-              }
-            />
+  {/* PRACTICE */}
+  <div className="nav-section">
+    <p className="nav-section-title">
+      PRACTICE
+    </p>
 
-            <SidebarItem
-              icon={Code2}
-              label="Coding Interview"
-              path="/dashboard/coding"
-              active={isActive('/dashboard/coding')}
-              badge={
-                state.codingScore ||
-                null
-              }
-            />
+    <SidebarItem
+      icon={Video}
+      label="Mock Interviews"
+      path="/dashboard/mock"
+      active={isActive('/dashboard/mock')}
+    />
 
-            <SidebarItem
-              icon={Users}
-              label="HR Trainer"
-              path="/dashboard/hr"
-              active={isActive('/dashboard/hr')}
-              badge={
-                state.hrScore ||
-                null
-              }
-            />
+    <SidebarItem
+      icon={Code2}
+      label="Coding Interview"
+      path="/dashboard/coding"
+      active={isActive('/dashboard/coding')}
+    />
 
-            <SidebarItem
-              icon={Target}
-              label="Domain Prep"
-              path="/dashboard/domain"
-              active={isActive('/dashboard/domain')}
-            />
+    <SidebarItem
+      icon={Users}
+      label="HR Trainer"
+      path="/dashboard/hr"
+      active={isActive('/dashboard/hr')}
+    />
 
-            <SidebarItem
-              icon={Zap}
-              label="Panic Mode"
-              path="/dashboard/panic"
-              active={isActive('/dashboard/panic')}
-            />
-          </div>
+    <div className="panic-mode-wrapper">
+  <SidebarItem
+    icon={Zap}
+    label="Panic Mode 🔥"
+    path="/dashboard/panic"
+    active={isActive('/dashboard/panic')}
+    className="panic-mode-item"
+  />
+</div>
 
-          <div className="nav-section">
-            <p className="nav-section-title">
-              REPORTS
-            </p>
+    <SidebarItem
+      icon={Clock}
+      label="Prep Sessions"
+      path="/dashboard/prep"
+      active={isActive('/dashboard/prep')}
+    />
+  </div>
 
-            <SidebarItem
-              icon={BarChart3}
-              label="Analytics"
-              path="/dashboard/analytics"
-              active={isActive('/dashboard/analytics')}
-              badge={
-                state.totalInterviews > 0
-                  ? state.totalInterviews
-                  : null
-              }
-            />
+  {/* INSIGHTS */}
+  <div className="nav-section">
+    <p className="nav-section-title">
+      INSIGHTS
+    </p>
 
-            <SidebarItem
-              icon={History}
-              label="History"
-              path="/dashboard/history"
-              active={isActive('/dashboard/history')}
-            />
+    <SidebarItem
+      icon={MessageSquare}
+      label="AI Feedback"
+      path="/dashboard/ai-feedback"
+      active={isActive('/dashboard/ai-feedback')}
+    />
 
-            <SidebarItem
-              icon={Bell}
-              label="Notifications"
-              path="/dashboard/notifications"
-              active={isActive('/dashboard/notifications')}
-              badge={
-                unreadNotifications ||
-                null
-              }
-            />
-          </div>
-        </div>
+    <SidebarItem
+      icon={BarChart3}
+      label="Analytics"
+      path="/dashboard/analytics"
+      active={isActive('/dashboard/analytics')}
+    />
 
-        <div className="sidebar-footer">
-          <SidebarItem
-            icon={Settings}
-            label="Settings"
-            path="/dashboard/settings"
-            active={isActive('/dashboard/settings')}
-          />
+    <SidebarItem
+      icon={History}
+      label="History"
+      path="/dashboard/history"
+      active={isActive('/dashboard/history')}
+    />
+  </div>
 
-          <button
-            onClick={() => {
-              localStorage.removeItem(
-                'token'
-              );
+  {/* ACCOUNT */}
+  <div className="nav-section">
+    <p className="nav-section-title">
+      ACCOUNTS
+    </p>
 
-              dispatch({
-                type: 'LOGOUT'
-              });
+    <SidebarItem
+      icon={Bell}
+      label="Notifications"
+      path="/dashboard/notifications"
+      active={isActive('/dashboard/notifications')}
+      badge={unreadNotifications}
+    />
 
-              navigate('/login');
-            }}
-            className="sidebar-item logout-btn w-full text-left"
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer'
-            }}
-          >
-            <LogOut
-              size={20}
-              className="sidebar-icon"
-            />
+    <SidebarItem
+      icon={Settings}
+      label="Settings"
+      path="/dashboard/settings"
+      active={isActive('/dashboard/settings')}
+    />
 
-            <span className="sidebar-label">
-              Logout
-            </span>
-          </button>
-        </div>
+    <SidebarItem
+      icon={LogOut}
+      label="Logout"
+      onClick={() => {
+        localStorage.removeItem('token');
+
+        dispatch({ type: 'LOGOUT' });
+
+        navigate('/login');
+      }}
+      active={false}
+    />
+  </div>
+
+</div>
+
       </aside>
 
       <main className="dashboard-main">
@@ -651,25 +668,9 @@ const DashboardLayout = () => {
             </div>
           </div>
 
+          <SearchBar />
+
           <div className="header-right">
-            <SearchBar />
-
-            {state.overallReadiness !=
-              null && (
-              <div className="readiness-pill">
-                <span className="rp-label">
-                  Ready
-                </span>
-
-                <span className="rp-val">
-                  {
-                    state.overallReadiness
-                  }
-                  %
-                </span>
-              </div>
-            )}
-
             <button
               className="ai-assist-btn"
               onClick={() => {
@@ -683,7 +684,10 @@ const DashboardLayout = () => {
                 );
               }}
             >
-              <BrainCircuit size={18} />
+              <BrainCircuit
+              className="logo-icon"
+              size={16}
+            />
 
               <span className="btn-text">
                 AI Assistant
@@ -697,35 +701,17 @@ const DashboardLayout = () => {
                   ? 'active'
                   : ''
               }`}
-              aria-label={`Open notifications${
-                unreadNotifications
-                  ? `, ${unreadNotifications} unread`
-                  : ''
-              }`}
+              aria-label="Open notifications"
             >
-              <Bell size={25} />
+              <Bell size={26} />
 
-              {unreadNotifications >
-                0 && (
-                <>
-                  <span className="notification-ping"></span>
-
-                  <span className="notification-dot"></span>
-
-                  <span className="notification-count">
-                    {unreadNotifications >
-                    9
-                      ? '9+'
-                      : unreadNotifications}
-                  </span>
-                </>
-              )}
+              
             </Link>
 
             <div className="user-profile profile-avatar-wrap">
               <button
                 className={`avatar profile-avatar-btn ${
-                  state.isPro
+                  state?.isPro || true
                     ? 'profile-avatar-btn--pro'
                     : 'profile-avatar-btn--free'
                 } ${
@@ -744,10 +730,10 @@ const DashboardLayout = () => {
                 }
                 aria-haspopup="menu"
               >
-                {state.userName
+                {state?.userName
                   ?.charAt(0)
                   ?.toUpperCase() ||
-                  'U'}
+                  'N'}
               </button>
 
               <ProfileDropdown
@@ -759,12 +745,12 @@ const DashboardLayout = () => {
                     false
                   )
                 }
-                userName={state.userName}
+                userName={state?.userName || 'User'}
                 userInitials={
-                  state.userInitials
+                  state?.userInitials || 'U'
                 }
                 predictedRole={
-                  state.predictedRole
+                  state?.predictedRole || 'Candidate'
                 }
                 onLogout={() => {
                   localStorage.removeItem(
@@ -784,7 +770,9 @@ const DashboardLayout = () => {
         </header>
 
         <div className="dashboard-content">
-          <Outlet />
+          <ErrorBoundary title="Dashboard Content Error" fallbackText="The main dashboard content view encountered an error. Please reload the page.">
+            <Outlet />
+          </ErrorBoundary>
         </div>
       </main>
 

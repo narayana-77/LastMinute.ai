@@ -14,9 +14,11 @@ const initialState = {
     ? localStorage
         .getItem("userName")
         .split(' ')
+        .filter(Boolean)
         .map(word => word[0])
         .join('')
         .toUpperCase()
+        .slice(0, 2)
     : '',
 
   phone: localStorage.getItem("userPhone") || '',
@@ -79,18 +81,21 @@ const appReducer = (state, action) => {
 
     // ── LOGIN ───────────────────────────────────────────────────────────────
     case ACTIONS.LOGIN: {
-
-      const { name, email } = action.payload;
+      const name = action.payload?.name || action.payload?.userName || action.payload?.email?.split('@')[0] || 'User';
+      const email = action.payload?.email || '';
 
       localStorage.setItem("userName", name);
       localStorage.setItem("userEmail", email);
 
       const initials = name
-        .split(' ')
-        .map(w => w[0])
-        .join('')
-        .toUpperCase()
-        .slice(0, 2);
+        ? name
+            .split(' ')
+            .filter(Boolean)
+            .map(w => w[0])
+            .join('')
+            .toUpperCase()
+            .slice(0, 2)
+        : 'U';
 
       return {
         ...state,
