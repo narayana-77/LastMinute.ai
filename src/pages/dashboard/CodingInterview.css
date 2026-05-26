@@ -509,3 +509,185 @@
 
 .exec-stat span { color: var(--text-secondary); }
 .exec-stat strong { color: var(--text-primary); }
+.coding-setup-card{
+  max-width: 880px;
+  margin: 2rem auto 0;
+
+  padding: 2.5rem;
+
+  border-radius: 28px;
+
+  border:
+    1px solid rgba(255,255,255,0.05);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(12,12,24,0.96),
+      rgba(8,8,18,0.98)
+    );
+
+  box-shadow:
+    0 0 40px rgba(0,0,0,0.35);
+}
+
+.setup-top{
+  display:flex;
+  align-items:center;
+  gap:1.4rem;
+
+  margin-bottom:2rem;
+}
+
+.setup-icon{
+  width:74px;
+  height:74px;
+
+  border-radius:22px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(140,0,255,0.18),
+      rgba(0,212,255,0.12)
+    );
+
+  color:#9d4dff;
+}
+
+.setup-top h2{
+  font-size:2rem;
+  margin-bottom:0.5rem;
+}
+
+.setup-top p{
+  color:#8f90a6;
+  line-height:1.7;
+}
+
+.setup-info-grid{
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,1fr);
+
+  gap:1rem;
+
+  margin-top:2rem;
+}
+
+.setup-info-card{
+  padding:1.2rem;
+
+  border-radius:18px;
+
+  background:
+    rgba(255,255,255,0.03);
+
+  border:
+    1px solid rgba(255,255,255,0.05);
+
+  display:flex;
+  flex-direction:column;
+  gap:0.4rem;
+}
+
+.setup-info-card span{
+  color:#8a8aa3;
+  font-size:0.88rem;
+}
+
+.setup-info-card strong{
+  color:white;
+  font-size:1rem;
+}
+
+.coding-start-btn{
+  margin-top:2rem;
+
+  width:100%;
+  height:58px;
+
+  border:none;
+  border-radius:18px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:0.7rem;
+
+  font-size:1rem;
+  font-weight:600;
+
+  color:white;
+
+  background:
+    linear-gradient(
+      135deg,
+      #7b2ff7,
+      #00d4ff
+    );
+
+  box-shadow:
+    0 8px 26px rgba(123,47,247,0.20);
+
+  cursor:pointer;
+
+  transition:0.3s ease;
+}
+
+.coding-start-btn:hover{
+  transform:translateY(-2px);
+
+  box-shadow:
+    0 12px 34px rgba(123,47,247,0.28);
+}
+.coding-select{
+  width:100%;
+
+  margin-top:0.8rem;
+
+  height:52px;
+
+  border-radius:14px;
+
+  border:
+    1px solid rgba(255,255,255,0.06);
+
+  background:
+    rgba(255,255,255,0.03);
+
+  color:white;
+
+  padding:0 1rem;
+
+  font-size:0.95rem;
+  font-weight:500;
+
+  outline:none;
+
+  transition:0.3s ease;
+
+  cursor:pointer;
+}
+
+.coding-select:focus{
+  border-color:#7b2ff7;
+
+  box-shadow:
+    0 0 0 3px rgba(123,47,247,0.18);
+}
+
+.coding-select option{
+  background:#0b0b16;
+  color:white;
+}
+.coding-select:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: grayscale(0.3);
+}

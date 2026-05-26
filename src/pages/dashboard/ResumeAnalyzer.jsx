@@ -186,17 +186,34 @@ const ResumeAnalyzer = () => {
             )}
           </div>
 
-          {/* Target Role Input */}
-          <div className="glass-panel p-2 flex align-center mt-4" style={{ borderRadius: '12px' }}>
-            <Target className="mx-3 text-muted" size={18} />
-            <input
-              type="text"
-              placeholder="Target Role (e.g. Frontend Developer, Data Scientist)"
-              className="bg-transparent border-none text-white outline-none flex-1 p-2"
-              value={targetRole}
-              onChange={e => setTargetRole(e.target.value)}
-            />
-          </div>
+          {/* Premium Target Role Section */}
+<div className="target-role-section glass-panel">
+
+  <div className="target-role-header">
+
+    <div className="target-role-icon">
+      <Target size={20} />
+    </div>
+
+    <div>
+      <h3>Target Role</h3>
+
+      <p>
+        Tell AI which role you're preparing for ...
+      </p>
+    </div>
+
+  </div>
+
+  <input
+    type="text"
+    placeholder="Frontend Developer, AI Engineer, DevOps Engineer..."
+    className="target-role-input"
+    value={targetRole}
+    onChange={(e) => setTargetRole(e.target.value)}
+  />
+
+</div>
 
           {!file && (
             <div className="validation-banner">
@@ -273,7 +290,7 @@ const ResumeAnalyzer = () => {
     <div className="resume-analyzer-page fade-in">
       <div className="page-header d-flex justify-between align-center">
         <div>
-          <h1 className="page-title">Analysis <span className="gradient-text">Complete</span></h1>
+          <h1 className="page-title">Analysis <span className="gradient-text">Completed</span></h1>
           <p className="page-subtitle">We've identified your core strengths and personalized your preparation path.</p>
         </div>
         <button className="btn btn-outline" onClick={resetUpload}><RefreshCw size={18} /> Re-analyze</button>
@@ -303,12 +320,7 @@ const ResumeAnalyzer = () => {
                 </div>
               </div>
             </div>
-            <div className="ats-meter-section">
-              <div className="circular-progress large">
-                <span>{parsed.interviewReadiness || 75}</span>
-              </div>
-              <p className="ats-label">Readiness Score</p>
-            </div>
+            
           </div>
         </div>
 
@@ -317,7 +329,7 @@ const ResumeAnalyzer = () => {
           <h3 className="card-title"><Target className="text-cyan" size={20} /> Key Skills Detected</h3>
           <div className="skill-tags">
             {(parsed.skills || []).map(skill => (
-              <span key={skill} className="tag">{skill}</span>
+              <span key={skill} className="tag">{skill},</span>
             ))}
             {(!parsed.skills || parsed.skills.length === 0) && (
               <p className="text-muted">No skills detected.</p>

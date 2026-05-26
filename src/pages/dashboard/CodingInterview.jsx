@@ -18,7 +18,13 @@ const CodingInterview = () => {
   const [timeLeft, setTimeLeft] = useState(2700); // 45 minutes
   const [isRunning, setIsRunning] = useState(false);
   const [testResults, setTestResults] = useState(null);
+const [focusArea, setFocusArea] = useState('');
 
+const [language, setLanguage] = useState('');
+
+const [difficulty, setDifficulty] = useState('');
+
+const [duration, setDuration] = useState('');
   // ── Timer Logic ───────────────────────────────────
   useEffect(() => {
     let timer;
@@ -79,30 +85,118 @@ const CodingInterview = () => {
           <p className="page-subtitle">Demonstrate your problem-solving skills in a live technical environment.</p>
         </div>
 
-        <div className="glass-panel p-10 max-w-lg mx-auto text-center">
-           <div className="flex justify-center mb-6">
-              <div className="icon-wrap bg-purple-dim p-4 rounded-full">
-                <Code2 className="text-purple" size={40} />
-              </div>
-           </div>
-           <h2>Technical Assessment</h2>
-           <p className="text-secondary mt-4 mb-8">You will be given a technical problem and 45 minutes to implement a solution. AI will monitor your logic and complexity.</p>
-           
-           <div className="flex flex-col gap-4 text-left mb-8">
-              <div className="glass-panel p-4 flex justify-between align-center">
-                 <span className="text-muted text-sm">Focus Area</span>
-                 <span className="text-cyan font-bold">Algorithms & Data Structures</span>
-              </div>
-              <div className="glass-panel p-4 flex justify-between align-center">
-                 <span className="text-muted text-sm">Language</span>
-                 <span className="text-purple font-bold">JavaScript / ES6</span>
-              </div>
-           </div>
+        <div className="coding-setup-card glass-panel">
 
-           <button className="btn btn-primary w-full" onClick={handleStart}>
-              Initialize Environment <Play size={18} />
-           </button>
-        </div>
+  <div className="setup-top">
+    <div className="setup-icon">
+      <Code2 size={34} />
+    </div>
+
+    <div>
+      <h2>Technical Assessment</h2>
+
+      <p>
+        Solve real-world coding challenges in a monitored AI interview environment.
+      </p>
+    </div>
+  </div>
+
+  <div className="setup-info-grid">
+
+  {/* Focus Area */}
+  <div className="setup-info-card">
+    <span>Focus Area</span>
+
+    <select
+      className="coding-select"
+      value={focusArea}
+      onChange={(e) => setFocusArea(e.target.value)}
+    >
+      <option value="">Choose</option>
+      <option>Algorithms & Data Structures</option>
+      <option>Frontend Development</option>
+      <option>Backend Development</option>
+      <option>Full Stack Development</option>
+      <option>System Design</option>
+      <option>Database Management</option>
+      <option>Machine Learning</option>
+    </select>
+  </div>
+
+  {/* Language */}
+  <div className="setup-info-card">
+    <span>Language</span>
+
+    <select
+  className="coding-select"
+  value={language}
+  onChange={(e) => setLanguage(e.target.value)}
+  disabled={focusArea !== 'Algorithms & Data Structures'}
+>
+  <option value="">Choose</option>
+  <option value="">
+  {focusArea !== 'Algorithms & Data Structures'
+    ? 'Available only for DSA'
+    : 'Choose'}
+</option>
+  <option>JavaScript</option>
+  <option>Python</option>
+  <option>Java</option>
+  <option>C</option>
+  <option>C++</option>
+  <option>C#</option>
+  <option>Go</option>
+  <option>Rust</option>
+  <option>PHP</option>
+</select>
+  </div>
+
+  {/* Difficulty */}
+  <div className="setup-info-card">
+    <span>Difficulty</span>
+
+    <select
+      className="coding-select"
+      value={difficulty}
+      onChange={(e) => setDifficulty(e.target.value)}
+    >
+      <option value="">Choose</option>
+      <option>Easy</option>
+      <option>Medium</option>
+      <option>Hard</option>
+    </select>
+  </div>
+
+  {/* Duration */}
+  <div className="setup-info-card">
+    <span>Duration</span>
+
+    <select
+      className="coding-select"
+      value={duration}
+      onChange={(e) => setDuration(e.target.value)}
+    >
+      <option value="">Choose</option>
+      <option>45 Minutes</option>
+      <option>1 Hour</option>
+      <option>1 Hour 15 Minutes</option>
+      <option>1 Hour 30 Minutes</option>
+      <option>1 Hour 45 Minutes</option>
+      <option>2 Hours</option>
+    </select>
+  </div>
+
+</div>
+
+  <button
+    className="coding-start-btn"
+    onClick={handleStart}
+  >
+    Initialize Environment
+    <Play size={18} />
+  </button>
+
+</div>
       </div>
     );
   }

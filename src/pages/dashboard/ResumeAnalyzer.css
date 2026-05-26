@@ -684,3 +684,101 @@
 .primary-action:hover { box-shadow: 0 10px 30px rgba(0, 240, 255, 0.2); border-color: var(--accent-cyan); }
 .secondary-action:hover { box-shadow: 0 10px 30px rgba(112, 0, 255, 0.2); border-color: var(--accent-purple); }
 .panic-action:hover { box-shadow: 0 10px 30px rgba(255, 95, 86, 0.2); border-color: #FF5F56; }
+.target-role-section{
+  margin-top: 1.5rem;
+
+  padding: 1.4rem;
+
+  border-radius: 22px;
+
+  border:
+    1px solid rgba(255,255,255,0.06);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(16,18,35,0.82),
+      rgba(8,8,20,0.96)
+    );
+}
+
+.target-role-header{
+  display:flex;
+  align-items:center;
+  gap:1rem;
+
+  margin-bottom:1rem;
+}
+
+.target-role-icon{
+  width:52px;
+  height:52px;
+
+  border-radius:16px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  color:#00D4FF;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(138,43,226,0.18),
+      rgba(0,212,255,0.12)
+    );
+
+  border:
+    1px solid rgba(255,255,255,0.08);
+}
+
+.target-role-header h3{
+  font-size:1rem;
+  font-weight:600;
+
+  color:white;
+}
+
+.target-role-header p{
+  color:#8b8ba7;
+  font-size:0.88rem;
+
+  margin-top:0.2rem;
+}
+
+.target-role-input{
+  width:100%;
+
+  height:58px;
+
+  border-radius:16px;
+
+  border:
+    1px solid rgba(255,255,255,0.08);
+
+  background:
+    rgba(255,255,255,0.03);
+
+  padding:0 1rem;
+
+  color:white;
+
+  font-size:0.95rem;
+
+  outline:none;
+
+  transition:all 0.3s ease;
+}
+
+.target-role-input:focus{
+  border-color:
+    rgba(138,43,226,0.7);
+
+  box-shadow:
+    0 0 20px rgba(138,43,226,0.14);
+}
+
+.target-role-input::placeholder{
+  color:#70708a;
+}

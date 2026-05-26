@@ -76,6 +76,7 @@ const DashboardOverview = () => {
             <div className="welcome-sub-panels">
               {/* Profile Completion */}
               <div className="sub-panel profile-completion">
+                <span>Profile Completion</span>
                 <div className="panel-header">
                   <span className="avatar-icon-mock">👤</span>
                   <div className="panel-info">
@@ -89,10 +90,11 @@ const DashboardOverview = () => {
 
               {/* AI Tip */}
               <div className="sub-panel ai-tip">
+                <span>AI TIP</span>
                 <div className="panel-header">
                   <span className="tip-icon-mock">💡</span>
                   <div className="panel-info">
-                    <span className="panel-value desc">Consistency builds confidence. Complete 5+ mock interviews this week to sharpen your performance.</span>
+                    <span className="panel-value desc">Consistency builds confidence.</span>
                   </div>
                 </div>
               </div>
@@ -222,10 +224,10 @@ const DashboardOverview = () => {
             <div className="card-content-split">
               <div className="sessions-counter">{state?.totalInterviews != null ? state.totalInterviews : 0}</div>
               <div className="card-details">
-                <h4>No sessions yet</h4>
+                <h4>No sessions Completed yet</h4>
                 <p>Start your first mock interview to track your progress</p>
                 <button className="card-action-btn btn-green" onClick={() => navigate('/dashboard/mock')}>
-                  Start Mock Interview <ChevronRight size={14} />
+                  Start Mock <ChevronRight size={14} />
                 </button>
               </div>
             </div>

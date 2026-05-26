@@ -47,7 +47,18 @@ const HrInterview = () => {
   const [questionIdx, setQuestionIdx] = useState(0);
   const [starPhase, setStarPhase] = useState(1); // 1-4 representing S, T, A, R
   const [emotionTone, setEmotionTone] = useState('Confident');
+const [difficulty, setDifficulty] = useState('Intermediate');
 
+const [selectedFocus, setSelectedFocus] = useState([
+  'Confidence Building',
+  'Storytelling (STAR)'
+]);
+
+const [enabledSettings, setEnabledSettings] = useState([
+  'Webcam Posture Analysis',
+  'Voice Emotion Analysis',
+  'AI Follow-up Questions'
+]);
   const endSession = () => {
     const score = 84;
     dispatch({ type: ACTIONS.COMPLETE_HR, payload: { score, duration: formatTime(timer) } });
@@ -106,57 +117,190 @@ const HrInterview = () => {
             <div className="form-section">
               <h3 className="section-title"><Users size={18} className="text-cyan" /> Interview Category</h3>
               <div className="input-group">
-                <select className="auth-input" defaultValue="behavioral">
-                  <option value="general">General HR Round</option>
-                  <option value="behavioral">Behavioral Interview</option>
-                  <option value="leadership">Leadership Round</option>
-                  <option value="comm">Communication Practice</option>
-                  <option value="intro">Self Introduction Practice</option>
-                  <option value="managerial">Managerial Round</option>
+                <select
+  className="premium-select"
+  defaultValue="behavioral"
+>
+                  <option value="behavioral">
+  General HR Round
+</option>
+
+<option value="technical-hr">
+  Technical HR Round
+</option>
+
+<option value="managerial">
+  Managerial Round
+</option>
+
+<option value="stress">
+  Stress Interview
+</option>
+
+<option value="corporate">
+  Corporate Communication
+</option>
+
+<option value="leadership">
+  Leadership Evaluation
+</option>
+
+<option value="startup">
+  Startup Culture Round
+</option>
+
+<option value="sales">
+  Sales & Negotiation
+</option>
+
+<option value="customer">
+  Customer Handling
+</option>
+
+<option value="executive">
+  Executive Presence
+</option>
+
+<option value="campus">
+  Campus Placement Round
+</option>
+
+<option value="group-discussion">
+  Group Discussion Prep
+</option>
                 </select>
               </div>
-              <div className="input-group mt-3">
-                <label>Difficulty Level</label>
-                <div className="radio-group">
-                  {['Beginner', 'Intermediate', 'Advanced', 'Corporate'].map(d => (
-                    <label key={d} className="radio-btn">
-                      <input type="radio" name="diff" value={d.toLowerCase()} defaultChecked={d === 'Intermediate'} />
-                      {d}
-                    </label>
-                  ))}
-                </div>
-              </div>
+              <div className="premium-difficulty-grid">
+
+  {[
+    'Beginner',
+    'Intermediate',
+    'Advanced',
+    'Corporate'
+  ].map((level) => (
+
+    <button
+      key={level}
+      type="button"
+      className={`premium-level-card ${
+        difficulty === level ? 'active' : ''
+      }`}
+      onClick={() => setDifficulty(level)}
+    >
+      {level}
+    </button>
+
+  ))}
+
+</div>
             </div>
 
             {/* Focus Areas */}
             <div className="form-section">
               <h3 className="section-title"><Target size={18} className="text-purple" /> Focus Areas</h3>
-              <div className="checkbox-grid">
-                {['Confidence Building', 'Storytelling (STAR)', 'Professional Communication', 'Emotional Tone', 'HR Question Mastery', 'Body Language'].map(f => (
-                  <label key={f} className="checkbox-label">
-                    <input type="checkbox" defaultChecked={['Confidence Building', 'Storytelling (STAR)'].includes(f)} />
-                    {f}
-                  </label>
-                ))}
-              </div>
+              <div className="premium-focus-grid">
+
+  {[
+    'Confidence Building',
+    'Storytelling (STAR)',
+    'Professional Communication',
+    'Emotional Tone',
+    'HR Question Mastery',
+    'Body Language'
+  ].map((item) => (
+
+    <button
+      key={item}
+      type="button"
+      className={`premium-focus-chip ${
+        selectedFocus.includes(item)
+          ? 'active'
+          : ''
+      }`}
+      onClick={() => {
+
+        if (selectedFocus.includes(item)) {
+
+          setSelectedFocus(
+            selectedFocus.filter(
+              (f) => f !== item
+            )
+          );
+
+        } else {
+
+          setSelectedFocus([
+            ...selectedFocus,
+            item
+          ]);
+
+        }
+
+      }}
+    >
+      {item}
+    </button>
+
+  ))}
+
+</div>
             </div>
 
             {/* Settings */}
             <div className="form-section">
               <h3 className="section-title"><Settings size={18} className="text-pink" /> Session Settings</h3>
-              <div className="toggle-group">
-                {[
-                  { label: 'Webcam Posture Analysis', checked: true },
-                  { label: 'Voice Emotion Analysis', checked: true },
-                  { label: 'AI Follow-up Questions', checked: true },
-                  { label: 'Timed Mode (3 min/question)', checked: false },
-                ].map(s => (
-                  <label key={s.label} className="toggle-item">
-                    <span>{s.label}</span>
-                    <input type="checkbox" className="toggle-checkbox" defaultChecked={s.checked} />
-                  </label>
-                ))}
-              </div>
+              <div className="premium-toggle-group">
+
+  {[
+    'Webcam Posture Analysis',
+    'Voice Emotion Analysis',
+    'AI Follow-up Questions',
+    'Timed Mode (3 min/question)'
+  ].map((setting) => (
+
+    <div
+      key={setting}
+      className="premium-toggle-row"
+    >
+
+      <span>{setting}</span>
+
+      <button
+        type="button"
+        className={`premium-toggle ${
+          enabledSettings.includes(setting)
+            ? 'active'
+            : ''
+        }`}
+        onClick={() => {
+
+          if (enabledSettings.includes(setting)) {
+
+            setEnabledSettings(
+              enabledSettings.filter(
+                (s) => s !== setting
+              )
+            );
+
+          } else {
+
+            setEnabledSettings([
+              ...enabledSettings,
+              setting
+            ]);
+
+          }
+
+        }}
+      >
+        <div className="toggle-circle"></div>
+      </button>
+
+    </div>
+
+  ))}
+
+</div>
             </div>
 
             <div className="setup-actions">

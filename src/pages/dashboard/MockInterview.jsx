@@ -19,7 +19,11 @@ const MockInterview = () => {
   const [timeLeft, setTimeLeft] = useState(1800); // 30 minutes
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [transcript, setTranscript] = useState([]);
-
+  const [targetRole, setTargetRole] = useState('');
+  const [webcamReady, setWebcamReady] = useState(false);
+const [micReady, setMicReady] = useState(false);
+const [aiReady, setAiReady] = useState(false);
+const [focusArea, setFocusArea] = useState('Behavioral');
   const questions = [
     "Tell me about a time you had to deal with a difficult stakeholder. How did you handle it?",
     "What is your approach to ensuring code quality in a fast-paced environment?",
@@ -35,7 +39,27 @@ const MockInterview = () => {
     }
     return () => clearInterval(timer);
   }, [stage, timeLeft]);
+useEffect(() => {
 
+  const timer1 = setTimeout(() => {
+    setWebcamReady(true);
+  }, 1200);
+
+  const timer2 = setTimeout(() => {
+    setMicReady(true);
+  }, 2200);
+
+  const timer3 = setTimeout(() => {
+    setAiReady(true);
+  }, 3200);
+
+  return () => {
+    clearTimeout(timer1);
+    clearTimeout(timer2);
+    clearTimeout(timer3);
+  };
+
+}, []);
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -75,35 +99,105 @@ const MockInterview = () => {
             <div className="form-section">
               <div className="section-title"><BrainCircuit size={20} className="text-purple" /> <h3>Interview Parameters</h3></div>
               <div className="input-group">
-                <label>Target Role</label>
-                <input type="text" className="bg-transparent border-glass p-3 rounded-lg text-white w-full" defaultValue={state.predictedRole || 'Senior Frontend Engineer'} />
-              </div>
+
+  <label>
+    Target Role
+  </label>
+
+  <input
+    type="text"
+    className="premium-role-input"
+    placeholder="Enter target role..."
+    value={targetRole}
+    onChange={(e) => setTargetRole(e.target.value)}
+  />
+
+</div>
               <div className="input-group">
-                <label>Focus Areas</label>
-                <div className="radio-group">
-                  <label className="radio-btn"><input type="radio" name="focus" defaultChecked /> Behavioral</label>
-                  <label className="radio-btn"><input type="radio" name="focus" /> Leadership</label>
-                  <label className="radio-btn"><input type="radio" name="focus" /> Communication</label>
-                </div>
-              </div>
+
+  <label>Focus Areas</label>
+
+  <div className="focus-chips">
+
+  <button
+    type="button"
+    className={`focus-chip ${
+      focusArea === 'Behavioral' ? 'active' : ''
+    }`}
+    onClick={() => setFocusArea('Behavioral')}
+  >
+    Behavioral
+  </button>
+
+  <button
+    type="button"
+    className={`focus-chip ${
+      focusArea === 'Leadership' ? 'active' : ''
+    }`}
+    onClick={() => setFocusArea('Leadership')}
+  >
+    Leadership
+  </button>
+
+  <button
+    type="button"
+    className={`focus-chip ${
+      focusArea === 'Communication' ? 'active' : ''
+    }`}
+    onClick={() => setFocusArea('Communication')}
+  >
+    Communication
+  </button>
+
+</div>
+
+</div>
             </div>
 
             <div className="form-section">
               <div className="section-title"><Shield size={20} className="text-cyan" /> <h3>System Check</h3></div>
               <div className="toggle-group">
-                <div className="toggle-item">
-                  <span>Webcam Access</span>
-                  <CheckCircle2 className="text-green" size={20} />
-                </div>
-                <div className="toggle-item">
-                  <span>Microphone Access</span>
-                  <CheckCircle2 className="text-green" size={20} />
-                </div>
-                <div className="toggle-item">
-                  <span>AI Readiness</span>
-                  <CheckCircle2 className="text-green" size={20} />
-                </div>
-              </div>
+
+  <div className="toggle-item">
+    <span>Webcam Access</span>
+
+    {webcamReady ? (
+      <CheckCircle2
+        className="text-green status-success"
+        size={20}
+      />
+    ) : (
+      <div className="status-loader"></div>
+    )}
+  </div>
+
+  <div className="toggle-item">
+    <span>Microphone Access</span>
+
+    {micReady ? (
+      <CheckCircle2
+        className="text-green status-success"
+        size={20}
+      />
+    ) : (
+      <div className="status-loader"></div>
+    )}
+  </div>
+
+  <div className="toggle-item">
+    <span>AI Readiness</span>
+
+    {aiReady ? (
+      <CheckCircle2
+        className="text-green status-success"
+        size={20}
+      />
+    ) : (
+      <div className="status-loader"></div>
+    )}
+  </div>
+
+</div>
             </div>
 
             <button className="btn btn-primary w-full pulse-btn" onClick={handleStart}>
