@@ -610,17 +610,18 @@ const DashboardLayout = () => {
     />
 
     <SidebarItem
-      icon={LogOut}
-      label="Logout"
-      onClick={() => {
-        localStorage.removeItem('token');
+  icon={LogOut}
+  label="Logout"
+  className="logout-btn"
+  onClick={() => {
+    localStorage.removeItem('token');
 
-        dispatch({ type: 'LOGOUT' });
+    dispatch({ type: 'LOGOUT' });
 
-        navigate('/login');
-      }}
-      active={false}
-    />
+    navigate('/login');
+  }}
+  active={false}
+/>
   </div>
 
 </div>

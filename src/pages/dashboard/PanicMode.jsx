@@ -75,7 +75,7 @@ const PanicMode = () => {
   const [tasks, setTasks]         = useState([]);
   const [motiveLine, setMotiveLine] = useState(motivationalLines[0]);
   const [readiness, setReadiness] = useState(68);
-
+const [interviewType, setInterviewType] = useState("mixed");
   /* ── Countdown Tick ── */
   useEffect(() => {
     if (stage !== 'dashboard') return;
@@ -189,13 +189,32 @@ const PanicMode = () => {
               </div>
             </div>
             <div className="input-group mt-3">
-              <select className="auth-input" defaultValue="mixed">
-                <option value="mixed">Mixed Interview (Tech + HR + Coding)</option>
-                <option value="tech">Technical Round Only</option>
-                <option value="hr">HR / Behavioral Only</option>
-                <option value="coding">Live Coding Only</option>
-              </select>
-            </div>
+  <div className="panic-select-wrapper">
+
+    <select
+      className="panic-select"
+      value={interviewType}
+      onChange={(e) => setInterviewType(e.target.value)}
+    >
+      <option value="mixed">
+        Mixed Interview (Tech + HR + Coding)
+      </option>
+
+      <option value="tech">
+        Technical Round Only
+      </option>
+
+      <option value="hr">
+        HR / Behavioral Only
+      </option>
+
+      <option value="coding">
+        Live Coding Only
+      </option>
+    </select>
+
+  </div>
+</div>
           </div>
 
           {/* Focus */}

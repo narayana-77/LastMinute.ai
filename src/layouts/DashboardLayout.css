@@ -1211,3 +1211,16 @@ border: 1px solid rgba(31,211,227,0.42);
 .sidebar-item.panic-mode-item .sidebar-label {
   font-weight: 600;
 }
+/* Logout button */
+.sidebar-item.logout-btn {
+  color: #ff4d6d;
+}
+
+.sidebar-item.logout-btn .sidebar-icon {
+  color: #ff4d6d;
+}
+
+.sidebar-item.logout-btn:hover {
+  background: rgba(255, 77, 109, 0.12);
+  color: #ff758f;
+}

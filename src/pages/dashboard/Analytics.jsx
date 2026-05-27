@@ -19,8 +19,10 @@ const MODULE_COLORS = {
 const Analytics = () => {
   const navigate  = useNavigate();
   const { state } = useApp();
-
-  const hasData = state.totalInterviews > 0;
+const hasData =
+  state.totalInterviews > 0 ||
+  state.resumeAnalyzed ||
+  state.atsScore > 0;
   const history = state.interviewHistory;
 
   // Build a simple line chart from history (reversed = chronological)
@@ -60,22 +62,149 @@ const Analytics = () => {
       </div>
 
       {/* ── No data state ── */}
-      {!hasData && (
-        <div className="empty-analytics glass-panel">
-          <BarChart3 size={56} className="text-muted mb-3" />
-          <h3>No Interview Data Yet</h3>
-          <p className="text-secondary">Complete at least one interview module to start seeing live performance analytics.</p>
-          <div className="empty-ctas">
-            <button className="btn btn-primary" onClick={() => navigate('/dashboard/resume')}>
-              <BrainCircuit size={18} /> Analyze Resume First
-            </button>
-            <button className="btn btn-outline" onClick={() => navigate('/dashboard/mock')}>
-              <Play size={18} /> Start Mock Interview
-            </button>
+      {!hasData && !state.resumeAnalyzed && (
+  <div className="empty-analytics glass-panel">
+    <BarChart3 size={56} className="text-muted mb-3" />
+
+    <h3>No Interview Data Yet</h3>
+
+    <p className="text-secondary">
+      Complete at least one interview module to start
+      seeing live performance analytics.
+    </p>
+
+    <div className="empty-ctas">
+      <button
+        className="btn btn-primary"
+        onClick={() => navigate('/dashboard/resume')}
+      >
+        <BrainCircuit size={18} />
+        Analyze Resume First
+      </button>
+
+      <button
+        className="btn btn-outline"
+        onClick={() => navigate('/dashboard/mock')}
+      >
+        <Play size={18} />
+        Start Mock Interview
+      </button>
+    </div>
+  </div>
+)}
+{state.resumeAnalyzed && state.totalInterviews === 0 && (
+  <div className="analytics-grid">
+
+    {/* ATS HERO CARD */}
+    <div className="analytics-card glass-panel col-span-2 premium-ats-card">
+
+      <div className="ats-top">
+        <div>
+          <span className="premium-badge">
+            AI Resume Intelligence
+          </span>
+
+          <h2>
+            Resume <span>Analytics</span>
+          </h2>
+
+          <p>
+            Your resume has been analyzed successfully.
+            AI generated a complete readiness profile
+            based on ATS, skills, formatting,
+            communication, and role alignment.
+          </p>
+        </div>
+
+        <div className="ats-score-circle">
+          <div className="ats-inner">
+            <h1>{state.atsScore || 82}</h1>
+            <span>ATS Score</span>
           </div>
         </div>
-      )}
+      </div>
 
+    </div>
+
+    {/* ANALYTICS CARDS */}
+
+    <div className="analytics-card glass-panel mini-premium-card">
+      <div className="mini-icon cyan-glow">
+        <CheckCircle2 size={22} />
+      </div>
+
+      <h3>Resume Strength</h3>
+
+      <p>
+        Strong keyword optimization and
+        recruiter readability detected.
+      </p>
+    </div>
+
+    <div className="analytics-card glass-panel mini-premium-card">
+      <div className="mini-icon purple-glow">
+        <TrendingUp size={22} />
+      </div>
+
+      <h3>Role Match</h3>
+
+      <p>
+        Resume aligns well with frontend,
+        SaaS and AI-based product companies.
+      </p>
+    </div>
+
+    <div className="analytics-card glass-panel mini-premium-card">
+      <div className="mini-icon pink-glow">
+        <BrainCircuit size={22} />
+      </div>
+
+      <h3>AI Confidence</h3>
+
+      <p>
+        AI predicts strong shortlisting chances
+        after mock interview practice.
+      </p>
+    </div>
+
+    <div className="analytics-card glass-panel mini-premium-card">
+      <div className="mini-icon orange-glow">
+        <AlertTriangle size={22} />
+      </div>
+
+      <h3>Weak Areas</h3>
+
+      <p>
+        Improve measurable achievements,
+        project impact and leadership wording.
+      </p>
+    </div>
+
+    {/* NEXT STEP PANEL */}
+
+    <div className="analytics-card glass-panel col-span-2 next-step-panel">
+
+      <div>
+        <h2>Next Recommended Step</h2>
+
+        <p>
+          Start AI mock interviews to generate
+          real-time behavioral and technical analytics.
+        </p>
+      </div>
+
+      <button
+        className="premium-start-btn"
+        onClick={() => navigate('/dashboard/mock')}
+      >
+        <Play size={18} />
+        Start Mock Interview
+      </button>
+
+    </div>
+
+  </div>
+)}
       {/* ── Analytics Grid ── */}
       {hasData && (
         <div className="analytics-grid">

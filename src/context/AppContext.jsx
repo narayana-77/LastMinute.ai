@@ -1,5 +1,10 @@
-import { createContext, useContext, useReducer, useCallback } from 'react';
-
+import {
+  createContext,
+  useContext,
+  useReducer,
+  useCallback,
+  useEffect
+} from 'react';
 // ── Initial State ─────────────────────────────────────────────────────────────
 const initialState = {
 
@@ -192,7 +197,7 @@ const appReducer = (state, action) => {
 
       return {
         ...state,
-        resumeFile: file,
+resumeFile: file ? file.name : null,
         resumeSource: source,
         resumeAnalyzed: true,
         predictedRole: role,
@@ -350,9 +355,33 @@ export const AppContext = createContext(null);
 // ── Provider ─────────────────────────────────────────────────────────────────
 export const AppProvider = ({ children }) => {
 
-  const [state, dispatch] = useReducer(appReducer, initialState);
+  const [state, dispatch] = useReducer(
+  appReducer,
+  initialState,
+  (initial) => {
+    try {
+      const saved = localStorage.getItem('lastminute-state');
 
-  // Toast helper
+      return saved
+        ? JSON.parse(saved)
+        : initial;
+    } catch {
+      return initial;
+    }
+  }
+);
+useEffect(() => {
+  try {
+    localStorage.setItem(
+      'lastminute-state',
+      JSON.stringify(state)
+    );
+  } catch (error) {
+    console.error('Storage failed:', error);
+  }
+}, [state]);
+console.log(state);  
+// Toast helper
   const toast = useCallback(
     (message, type = 'success', duration = 4000) => {
 
