@@ -224,14 +224,6 @@ formData.append(
     value={targetRole}
     onChange={(e) => setTargetRole(e.target.value)}
   />
-<textarea
-  className="job-description-input"
-  placeholder="Paste job description here..."
-  value={jobDescription}
-  onChange={(e) =>
-    setJobDescription(e.target.value)
-  }
-/>
 </div>
 
           {!file && (

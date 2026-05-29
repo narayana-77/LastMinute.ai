@@ -124,7 +124,7 @@ const Profile = () => {
     { icon: FileText,    label: 'Resume Score',     value: state.resumeScore      ?? '--', accent: 'purple', delay: 0   },
     { icon: TrendingUp,  label: 'Readiness',        value: state.overallReadiness  != null ? `${state.overallReadiness}%` : '--', accent: 'cyan', delay: 60  },
     { icon: Code2,       label: 'Coding Score',     value: state.codingScore      ?? '--', accent: 'purple', delay: 120 },
-    { icon: Star,        label: 'AI Confidence',    value: state.aiConfidence     ?? '--', accent: 'gold',   delay: 180 },
+    { icon: Star,        label: 'AI Con-fidence',    value: state.aiConfidence     ?? '--', accent: 'gold',   delay: 180 },
     { icon: Video,       label: 'Mock Sessions',    value: state.totalInterviews  ?? 0,    accent: 'cyan',   delay: 240 },
     { icon: Zap,         label: 'Panic Sessions',   value: state.panicSessions    ?? 0,    accent: 'purple', delay: 300 },
   ];
