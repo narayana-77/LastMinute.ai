@@ -268,8 +268,13 @@
     #ec4899
   );
 
+  background-clip: text;
   -webkit-background-clip: text;
+
+  color: transparent;
   -webkit-text-fill-color: transparent;
+
+  display: inline-block;
 }
 
 .premium-ats-card p {

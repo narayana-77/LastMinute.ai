@@ -2,9 +2,17 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {
-  UploadCloud, FileText,
-  BrainCircuit, CheckCircle2, AlertTriangle, RefreshCw,
-  Target, Code2, Play, Zap, ChevronRight
+  UploadCloud,
+  FileText,
+  BrainCircuit,
+  CheckCircle2,
+  AlertTriangle,
+  RefreshCw,
+  Target,
+  Code2,
+  ChevronRight,
+  Play,
+  Zap
 } from 'lucide-react';
 import { useApp, ACTIONS } from '../../context/AppContext';
 import './ResumeAnalyzer.css';
@@ -13,8 +21,9 @@ const API_URL = 'http://localhost:5000';
 
 const ResumeAnalyzer = () => {
   const navigate = useNavigate();
-  const { state, dispatch, toast } = useApp();
-
+const { dispatch, toast } = useApp();
+const [jobDescription, setJobDescription] =
+  useState("");
   const [stage, setStage] = useState('upload'); // upload | processing | results
   const [file, setFile] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -75,7 +84,10 @@ const ResumeAnalyzer = () => {
       const formData = new FormData();
       formData.append('resume', file);
       formData.append('targetRole', targetRole);
-
+formData.append(
+  'jobDescription',
+  jobDescription
+);
       const response = await axios.post(`${API_URL}/api/resume/upload`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -212,7 +224,14 @@ const ResumeAnalyzer = () => {
     value={targetRole}
     onChange={(e) => setTargetRole(e.target.value)}
   />
-
+<textarea
+  className="job-description-input"
+  placeholder="Paste job description here..."
+  value={jobDescription}
+  onChange={(e) =>
+    setJobDescription(e.target.value)
+  }
+/>
 </div>
 
           {!file && (
@@ -285,7 +304,10 @@ const ResumeAnalyzer = () => {
 
   // ── Results Stage ─────────────────────────────────
   const parsed = resumeData?.parsedData || {};
-
+const ats = parsed.atsAnalysis || {};
+const jobMatch = parsed.jobMatch || {};
+const improvements = parsed.improvements || {};
+const recruiter = parsed.recruiterInsights || {};
   return (
     <div className="resume-analyzer-page fade-in">
       <div className="page-header d-flex justify-between align-center">
@@ -297,6 +319,162 @@ const ResumeAnalyzer = () => {
       </div>
 
       <div className="results-grid">
+        {/* ATS SCORE CARD */}
+
+<div className="result-card glass-panel">
+  <h3 className="card-title">
+    ATS Performance
+  </h3>
+
+  <div className="ats-score-circle">
+    <div className="ats-score-value">
+      {ats.overallScore || 0}
+    </div>
+<span>/100</span>
+
+  </div>
+
+  <div className="ats-breakdown">
+
+<div className="ats-row">
+  <span>Keywords</span>
+  <strong>
+    {ats.keywordScore || 0}
+  </strong>
+</div>
+
+<div className="ats-row">
+  <span>Skills</span>
+  <strong>
+    {ats.skillsScore || 0}
+  </strong>
+</div>
+
+<div className="ats-row">
+  <span>Formatting</span>
+  <strong>
+    {ats.formattingScore || 0}
+  </strong>
+</div>
+
+<div className="ats-row">
+  <span>Readability</span>
+  <strong>
+    {ats.readabilityScore || 0}
+  </strong>
+</div>
+
+  </div>
+</div>
+{/* JOB MATCH CARD */}
+
+<div className="result-card glass-panel">
+  <h3 className="card-title">
+    Job Match Analysis
+  </h3>
+
+  <div className="job-match-score">
+    {jobMatch.matchPercentage || 0}%
+  </div>
+
+  <p className="text-muted">
+    Resume compatibility with job description
+  </p>
+
+  <div className="missing-keywords">
+
+<h4>Missing Keywords</h4>
+
+<div className="skill-tags">
+  {(jobMatch.missingKeywords || []).map(
+    (keyword, i) => (
+      <span
+        key={i}
+        className="tag tag-warning"
+      >
+        {keyword}
+      </span>
+    )
+  )}
+</div>
+
+  </div>
+</div>
+{/* AI IMPROVEMENTS */}
+
+<div className="result-card glass-panel">
+  <h3 className="card-title">
+    AI Resume Improvements
+  </h3>
+
+  <div className="improvement-section">
+
+
+<h4>Better Summary</h4>
+
+<p>
+  {improvements.betterSummary ||
+    "No suggestions available"}
+</p>
+
+
+  </div>
+
+  <div className="improvement-section">
+
+
+<h4>Better Bullet Points</h4>
+
+<ul>
+  {(improvements.betterBulletPoints || []).map(
+    (point, i) => (
+      <li key={i}>{point}</li>
+    )
+  )}
+</ul>
+
+
+  </div>
+</div>
+{/* RECRUITER INSIGHTS */}
+
+<div className="result-card glass-panel">
+  <h3 className="card-title">
+    Recruiter Insights
+  </h3>
+
+  <div className="insight-section">
+
+
+<h4>Strengths</h4>
+
+<ul>
+  {(recruiter.strengths || []).map(
+    (item, i) => (
+      <li key={i}>{item}</li>
+    )
+  )}
+</ul>
+
+
+  </div>
+
+  <div className="insight-section">
+
+
+<h4>Weaknesses</h4>
+
+<ul>
+  {(recruiter.weaknesses || []).map(
+    (item, i) => (
+      <li key={i}>{item}</li>
+    )
+  )}
+</ul>
+
+  </div>
+</div>
+
         {/* Profile Summary */}
         <div className="result-card glass-panel col-span-2">
           <div className="flex-row">

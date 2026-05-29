@@ -782,3 +782,24 @@
 .target-role-input::placeholder{
   color:#70708a;
 }
+.job-match-score{
+  font-size:3rem;
+  font-weight:800;
+
+  text-align:center;
+
+  margin:1rem 0;
+
+  background:
+    linear-gradient(
+      90deg,
+      #00F0FF,
+      #8A2BE2
+    );
+
+  background-clip:text;
+  -webkit-background-clip:text;
+
+  color:transparent;
+  -webkit-text-fill-color:transparent;
+}
