@@ -16,7 +16,7 @@ const calculateATSScore = (atsAnalysis) => {
     projectsScore * 0.1 +
     readabilityScore * 0.1;
 
-  return Math.round(finalScore);
+  return Math.round(finalScore*10);
 };
 
 module.exports = calculateATSScore;
